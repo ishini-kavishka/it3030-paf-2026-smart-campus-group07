@@ -26,15 +26,15 @@ function App() {
   // ─── Page Renderer ────────────────────────────────────────────────────────────
   const renderPage = (tab) => {
     switch (tab) {
-      case 'home':          return <HomePage onNavigate={setTab} />;
-      case 'dashboard':     return <DashboardOverview />;
-      case 'catalogue':     return <CataloguePage />;
-      case 'admin':         return <AdminDashboard />;
-      case 'bookings':      return <ComingSoon title="Booking Management" />;
-      case 'maintenance':   return <ComingSoon title="Maintenance & Incident Ticketing" />;
+      case 'home': return <HomePage onNavigate={setTab} />;
+      case 'dashboard': return <DashboardOverview />;
+      case 'catalogue': return <CataloguePage />;
+      case 'admin': return <AdminDashboard />;
+      case 'bookings': return <ComingSoon title="Booking Management" />;
+      case 'maintenance': return <ComingSoon title="Maintenance & Incident Ticketing" />;
       case 'notifications': return <ComingSoon title="Notifications" />;
-      case 'settings':      return <ComingSoon title="Settings" />;
-      default:              return <DashboardOverview />;
+      case 'settings': return <ComingSoon title="Settings" />;
+      default: return <DashboardOverview />;
     }
   };
 
@@ -43,14 +43,14 @@ function App() {
       {currentTab !== 'home' && (
         <Sidebar currentTab={currentTab} setTab={setTab} />
       )}
-      
+
       <div className="content-wrapper">
         <Header currentTab={currentTab} onNavigate={setTab} />
-        
+
         <main className="main-view animate-in">
           {renderPage(currentTab)}
         </main>
-        
+
         <Footer />
       </div>
     </div>

@@ -1,13 +1,13 @@
 import React from 'react';
-import { 
-  ArrowRight, 
-  BookOpen, 
-  Calendar, 
-  Wrench, 
-  Bell, 
-  ShieldCheck, 
-  Zap, 
-  Layout, 
+import {
+  ArrowRight,
+  BookOpen,
+  Calendar,
+  Wrench,
+  Bell,
+  ShieldCheck,
+  Zap,
+  Layout,
   Search
 } from 'lucide-react';
 
@@ -62,26 +62,26 @@ const HomePage = ({ onNavigate }) => {
             <div className="divider-h" />
             <span className="text-xs font-bold text-dim uppercase tracking-widest">v2.1.0-Stable</span>
           </div>
-          
+
           <h1 className="hero-main-title">
             Smart Campus <br />
             <span className="text-gradient">Operations Hub</span>
           </h1>
-          
+
           <p className="hero-description">
-            A production-inspired central nerve center designed to modernize university operations. 
+            A production-inspired central nerve center designed to modernize university operations.
             From facility catalogues to complex booking workflows and incident tracking—all in one seamless experience.
           </p>
-          
+
           <div className="flex items-center gap-4 mt-10">
-            <button 
-              className="btn-primary-lg" 
+            <button
+              className="btn-primary-lg"
               onClick={() => onNavigate('catalogue')}
             >
               Explore Catalogue
               <ArrowRight size={18} />
             </button>
-            <button 
+            <button
               className="btn-ghost-lg"
               onClick={() => onNavigate('dashboard')}
             >
@@ -116,7 +116,7 @@ const HomePage = ({ onNavigate }) => {
                   ))}
                 </div>
               </div>
-              <button 
+              <button
                 className="module-link"
                 onClick={() => onNavigate(mod.id)}
               >
@@ -133,7 +133,7 @@ const HomePage = ({ onNavigate }) => {
           <div className="info-text">
             <h2 className="section-title">Industrial Intelligence</h2>
             <p className="section-subtitle">Built with scalability and security in mind.</p>
-            
+
             <div className="benefit-list">
               <div className="benefit-item">
                 <div className="benefit-icon"><ShieldCheck size={20} /></div>
@@ -158,7 +158,7 @@ const HomePage = ({ onNavigate }) => {
               </div>
             </div>
           </div>
-          
+
           <div className="info-visual glass-card">
             <div className="visual-header">
               <div className="dot red" />
