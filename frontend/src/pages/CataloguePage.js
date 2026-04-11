@@ -102,7 +102,7 @@ const PublicResourceCard = ({ resource, onViewDetails }) => {
 };
 
 // ─── Detail Modal ─────────────────────────────────────────────────────────────
-const ResourceDetailModal = ({ resource, onClose }) => {
+const ResourceDetailModal = ({ resource, onClose, setTab }) => {
   if (!resource) return null;
   const meta = getTypeMeta(resource.type);
   const Icon = meta.icon;
@@ -200,9 +200,23 @@ const ResourceDetailModal = ({ resource, onClose }) => {
             </div>
           </div>
 
-          <button onClick={onClose} className="btn btn-ghost w-full mt-6">
-            Close
-          </button>
+          <div className="flex gap-2 mt-6">
+            <button onClick={onClose} className="btn btn-ghost flex-1">
+              Close
+            </button>
+            {isActive && (
+              <button 
+                onClick={() => {
+                  onClose();
+                  if (setTab) setTab('my-bookings');
+                }} 
+                className="btn btn-primary flex-1"
+                style={{ background: meta.color, borderColor: meta.color, color: '#fff' }}
+              >
+                Book Now
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -210,7 +224,7 @@ const ResourceDetailModal = ({ resource, onClose }) => {
 };
 
 // ─── Main Catalogue Page ──────────────────────────────────────────────────────
-const CataloguePage = () => {
+const CataloguePage = ({ setTab }) => {
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -434,6 +448,7 @@ const CataloguePage = () => {
         <ResourceDetailModal
           resource={selectedResource}
           onClose={() => setSelectedResource(null)}
+          setTab={setTab}
         />
       )}
     </div>

@@ -6,6 +6,8 @@ import Footer from './components/Footer';
 import AdminDashboard from './pages/AdminDashboard';
 import CataloguePage from './pages/CataloguePage';
 import DashboardOverview from './pages/DashboardOverview';
+import MyBookingsPage from './pages/MyBookingsPage';
+import AdminBookingsPage from './pages/AdminBookingsPage';
 import HomePage from './pages/HomePage';
 
 // ─── Placeholder pages for sidebar items that belong to other members ─────────
@@ -18,6 +20,21 @@ const ComingSoon = ({ title }) => (
     <p className="text-muted text-sm">This module is being built by another team member.</p>
   </div>
 );
+
+// ─── Page Renderer ────────────────────────────────────────────────────────────
+const renderPage = (tab, setTab) => {
+  switch (tab) {
+    case 'dashboard':     return <DashboardOverview />;
+    case 'catalogue':     return <CataloguePage setTab={setTab} />;
+    case 'admin':         return <AdminDashboard />;
+    case 'my-bookings':   return <MyBookingsPage />;
+    case 'admin-bookings':return <AdminBookingsPage />;
+    case 'maintenance':   return <ComingSoon title="Maintenance & Incident Ticketing" />;
+    case 'notifications': return <ComingSoon title="Notifications" />;
+    case 'settings':      return <ComingSoon title="Settings" />;
+    default:              return <DashboardOverview />;
+  }
+};
 
 function App() {
   // Changed default tab to dashboard for the Command Center experience
@@ -48,7 +65,7 @@ function App() {
         <Header currentTab={currentTab} onNavigate={setTab} />
         
         <main className="main-view animate-in">
-          {renderPage(currentTab)}
+          {renderPage(currentTab, setTab)}
         </main>
         
         <Footer />
