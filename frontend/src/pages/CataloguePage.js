@@ -112,7 +112,7 @@ const ResourceDetailModal = ({ resource, onClose, setTab }) => {
     <div
       style={{
         position: 'fixed', inset: 0, zIndex: 2000,
-        background: 'rgba(2,6,23,0.88)', backdropFilter: 'blur(10px)',
+        background: 'rgba(15, 23, 42, 0.1)', backdropFilter: 'blur(4px)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: '1.5rem',
       }}
