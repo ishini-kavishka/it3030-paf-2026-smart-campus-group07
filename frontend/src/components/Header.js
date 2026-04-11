@@ -1,22 +1,22 @@
 import React from 'react';
-import { 
-  Search, 
-  Bell, 
-  User, 
-  Calendar, 
+import {
+  Search,
+  Bell,
+  User,
+  Calendar,
   Database,
   Menu,
-  ChevronRight 
+  ChevronRight
 } from 'lucide-react';
 
 const Header = ({ currentTab, onNavigate, username = 'Admin User', role = 'Member 1' }) => {
   const isHome = currentTab === 'home';
-  
-  const today = new Date().toLocaleDateString('en-US', { 
-    weekday: 'long', 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
+
+  const today = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
   });
 
   const getPageTitle = (tab) => {
@@ -36,7 +36,7 @@ const Header = ({ currentTab, onNavigate, username = 'Admin User', role = 'Membe
   return (
     <header className={`app-header ${isHome ? 'header-home' : 'header-app'}`}>
       <div className="header-container">
-        
+
         {/* ── Left Side: Logo (Home) or Title (App) ── */}
         <div className="header-left">
           {isHome ? (
@@ -66,9 +66,9 @@ const Header = ({ currentTab, onNavigate, username = 'Admin User', role = 'Membe
           ) : (
             <div className="header-search-box">
               <Search size={18} className="search-icon" />
-              <input 
-                type="text" 
-                placeholder="Find resources, documents, or members..." 
+              <input
+                type="text"
+                placeholder="Find resources, documents, or members..."
                 className="search-input"
               />
             </div>
@@ -83,7 +83,7 @@ const Header = ({ currentTab, onNavigate, username = 'Admin User', role = 'Membe
               <span>{today}</span>
             </div>
           )}
-          
+
           <div className="header-actions">
             <button className="header-action-btn" title="View Alerts">
               <div className="notification-ping" />
