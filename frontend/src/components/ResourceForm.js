@@ -97,6 +97,7 @@ const ResourceForm = ({ resource, isOpen, onClose, onSubmit }) => {
                   value={formData.name} 
                   onChange={handleChange} 
                   className={`premium-input ${errors.name ? 'input-error' : ''}`}
+                  autoFocus
                   placeholder="e.g. Auditorium A, Lab 304..."
                 />
               </div>
@@ -192,6 +193,7 @@ const ResourceForm = ({ resource, isOpen, onClose, onSubmit }) => {
 
           <div className="modal-footer">
             <button type="button" onClick={onClose} className="btn-cancel">
+              <X size={18} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
               Cancel
             </button>
             <button type="submit" className="btn-save">
