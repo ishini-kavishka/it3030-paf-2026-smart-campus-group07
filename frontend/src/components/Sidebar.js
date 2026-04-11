@@ -29,7 +29,8 @@ const Sidebar = ({ currentTab, setTab }) => {
     {
       section: 'Operations',
       items: [
-        { id: 'bookings', icon: CalendarClock, label: 'Booking Management' },
+        { id: 'my-bookings', icon: CalendarClock, label: 'My Bookings', tag: 'Client' },
+        { id: 'admin-bookings', icon: CalendarClock, label: 'Admin Bookings', tag: 'Admin' },
         { id: 'maintenance', icon: Wrench, label: 'Maintenance' },
         { id: 'notifications', icon: Bell, label: 'Notifications' },
       ],

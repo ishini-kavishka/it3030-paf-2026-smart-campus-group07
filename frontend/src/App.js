@@ -6,6 +6,8 @@ import Footer from './components/Footer';
 import AdminDashboard from './pages/AdminDashboard';
 import CataloguePage from './pages/CataloguePage';
 import DashboardOverview from './pages/DashboardOverview';
+import MyBookingsPage from './pages/MyBookingsPage';
+import AdminBookingsPage from './pages/AdminBookingsPage';
 
 // ─── Placeholder pages for sidebar items that belong to other members ─────────
 const ComingSoon = ({ title }) => (
@@ -19,12 +21,13 @@ const ComingSoon = ({ title }) => (
 );
 
 // ─── Page Renderer ────────────────────────────────────────────────────────────
-const renderPage = (tab) => {
+const renderPage = (tab, setTab) => {
   switch (tab) {
     case 'dashboard':     return <DashboardOverview />;
-    case 'catalogue':     return <CataloguePage />;
+    case 'catalogue':     return <CataloguePage setTab={setTab} />;
     case 'admin':         return <AdminDashboard />;
-    case 'bookings':      return <ComingSoon title="Booking Management" />;
+    case 'my-bookings':   return <MyBookingsPage />;
+    case 'admin-bookings':return <AdminBookingsPage />;
     case 'maintenance':   return <ComingSoon title="Maintenance & Incident Ticketing" />;
     case 'notifications': return <ComingSoon title="Notifications" />;
     case 'settings':      return <ComingSoon title="Settings" />;
@@ -44,7 +47,7 @@ function App() {
         <Header />
         
         <main className="main-view animate-in">
-          {renderPage(currentTab)}
+          {renderPage(currentTab, setTab)}
         </main>
         
         <Footer />
