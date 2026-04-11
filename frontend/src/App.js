@@ -6,6 +6,7 @@ import Footer from './components/Footer';
 import AdminDashboard from './pages/AdminDashboard';
 import CataloguePage from './pages/CataloguePage';
 import DashboardOverview from './pages/DashboardOverview';
+import HomePage from './pages/HomePage';
 
 // ─── Placeholder pages for sidebar items that belong to other members ─────────
 const ComingSoon = ({ title }) => (
@@ -18,30 +19,33 @@ const ComingSoon = ({ title }) => (
   </div>
 );
 
-// ─── Page Renderer ────────────────────────────────────────────────────────────
-const renderPage = (tab) => {
-  switch (tab) {
-    case 'dashboard':     return <DashboardOverview />;
-    case 'catalogue':     return <CataloguePage />;
-    case 'admin':         return <AdminDashboard />;
-    case 'bookings':      return <ComingSoon title="Booking Management" />;
-    case 'maintenance':   return <ComingSoon title="Maintenance & Incident Ticketing" />;
-    case 'notifications': return <ComingSoon title="Notifications" />;
-    case 'settings':      return <ComingSoon title="Settings" />;
-    default:              return <DashboardOverview />;
-  }
-};
-
 function App() {
   // Changed default tab to dashboard for the Command Center experience
-  const [currentTab, setTab] = useState('dashboard');
+  const [currentTab, setTab] = useState('home');
+
+  // ─── Page Renderer ────────────────────────────────────────────────────────────
+  const renderPage = (tab) => {
+    switch (tab) {
+      case 'home':          return <HomePage onNavigate={setTab} />;
+      case 'dashboard':     return <DashboardOverview />;
+      case 'catalogue':     return <CataloguePage />;
+      case 'admin':         return <AdminDashboard />;
+      case 'bookings':      return <ComingSoon title="Booking Management" />;
+      case 'maintenance':   return <ComingSoon title="Maintenance & Incident Ticketing" />;
+      case 'notifications': return <ComingSoon title="Notifications" />;
+      case 'settings':      return <ComingSoon title="Settings" />;
+      default:              return <DashboardOverview />;
+    }
+  };
 
   return (
     <div className="app-layout">
-      <Sidebar currentTab={currentTab} setTab={setTab} />
+      {currentTab !== 'home' && (
+        <Sidebar currentTab={currentTab} setTab={setTab} />
+      )}
       
       <div className="content-wrapper">
-        <Header />
+        <Header currentTab={currentTab} onNavigate={setTab} />
         
         <main className="main-view animate-in">
           {renderPage(currentTab)}

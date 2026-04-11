@@ -8,6 +8,7 @@ import {
   Bell,
   Settings,
   LayoutDashboard,
+  Home,
   LogOut,
 } from 'lucide-react';
 
@@ -16,6 +17,7 @@ const Sidebar = ({ currentTab, setTab }) => {
     {
       section: 'General',
       items: [
+        { id: 'home', icon: Home, label: 'Portal Home' },
         { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard Overview' },
       ],
     },
