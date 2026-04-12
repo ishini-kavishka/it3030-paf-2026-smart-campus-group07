@@ -16,7 +16,6 @@ const Sidebar = ({ currentTab, setTab }) => {
     {
       section: 'General',
       items: [
-        { id: 'home', icon: Home, label: 'Portal Home' },
         { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard Overview' },
       ],
     },
@@ -108,7 +107,7 @@ const Sidebar = ({ currentTab, setTab }) => {
       </nav>
 
       {/* ── Footer ────────────────────────────────────────────── */}
-      <div className="sidebar-footer" style={{ marginTop: 'auto', paddingTop: '1rem' }}>
+      <div className="sidebar-footer" style={{ marginTop: 'auto', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
         <button
           className="nav-item"
           style={{
@@ -120,6 +119,19 @@ const Sidebar = ({ currentTab, setTab }) => {
         >
           <LogOut size={18} />
           <span className="label">Log Out</span>
+        </button>
+
+        <button
+          className="nav-item"
+          style={{
+            background: 'rgba(255, 255, 255, 0.04)',
+            color: 'rgba(255,255,255,0.5)',
+            border: '1px solid rgba(255,255,255,0.06)'
+          }}
+          onClick={() => setTab('home')}
+        >
+          <Home size={18} />
+          <span className="label">Back to Home</span>
         </button>
       </div>
     </div>
