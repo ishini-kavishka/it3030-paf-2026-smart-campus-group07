@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   Database,
-  BookOpen,
   ShieldCheck,
   CalendarClock,
   Wrench,
@@ -24,14 +23,13 @@ const Sidebar = ({ currentTab, setTab }) => {
     {
       section: 'Facilities',
       items: [
-        { id: 'catalogue', icon: BookOpen, label: 'Resource Catalogue' },
         { id: 'admin', icon: ShieldCheck, label: 'Facilities & Assets' },
       ],
     },
+
     {
       section: 'Operations',
       items: [
-        { id: 'my-bookings', icon: CalendarClock, label: 'My Bookings', tag: 'Client' },
         { id: 'admin-bookings', icon: CalendarClock, label: 'Admin Bookings', tag: 'Admin' },
         { id: 'maintenance', icon: Wrench, label: 'Maintenance' },
         { id: 'notifications', icon: Bell, label: 'Notifications' },
