@@ -101,6 +101,12 @@ const Header = ({ currentTab, onNavigate, userRole, setUserRole }) => {
             {isHome ? (
               <nav className="header-nav">
                 <button onClick={() => navigate('catalogue')}>Catalogue</button>
+                <button
+                  className={currentTab === 'my-bookings' ? 'active-nav' : ''}
+                  onClick={() => navigate('my-bookings')}
+                >
+                  My Bookings
+                </button>
                 {userRole === 'admin' && <button onClick={() => navigate('dashboard')}>Dashboard</button>}
                 {userRole === 'admin' && <button onClick={() => navigate('admin')}>Admin Hub</button>}
               </nav>
