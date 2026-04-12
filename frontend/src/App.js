@@ -23,32 +23,37 @@ const ComingSoon = ({ title }) => (
 
 const renderPage = (tab, setTab) => {
   switch (tab) {
-    case 'home':          return <HomePage onNavigate={setTab} />;
-    case 'dashboard':     return <DashboardOverview />;
-    case 'catalogue':     return <CataloguePage setTab={setTab} />;
-    case 'admin':         return <AdminDashboard />;
-    case 'my-bookings':   return <MyBookingsPage />;
-    case 'admin-bookings':return <AdminBookingsPage />;
-    case 'maintenance':   return <ComingSoon title="Maintenance & Incident Ticketing" />;
+    case 'home': return <HomePage onNavigate={setTab} />;
+    case 'dashboard': return <DashboardOverview />;
+    case 'catalogue': return <CataloguePage setTab={setTab} />;
+    case 'admin': return <AdminDashboard />;
+    case 'my-bookings': return <MyBookingsPage />;
+    case 'admin-bookings': return <AdminBookingsPage />;
+    case 'maintenance': return <ComingSoon title="Maintenance & Incident Ticketing" />;
     case 'notifications': return <ComingSoon title="Notifications" />;
-    case 'settings':      return <ComingSoon title="Settings" />;
-    default:              return <DashboardOverview />;
+    case 'settings': return <ComingSoon title="Settings" />;
+    default: return <DashboardOverview />;
   }
 };
 
 function App() {
-  // Changed default tab to dashboard for the Command Center experience
   const [currentTab, setTab] = useState('home');
+  const [userRole, setUserRole] = useState('admin');
 
 
   return (
-    <div className="app-layout">
+    <div className={`app-layout role-${userRole}`}>
       {currentTab !== 'home' && (
-        <Sidebar currentTab={currentTab} setTab={setTab} />
+        <Sidebar currentTab={currentTab} setTab={setTab} userRole={userRole} />
       )}
 
       <div className="content-wrapper">
-        <Header currentTab={currentTab} onNavigate={setTab} />
+        <Header
+          currentTab={currentTab}
+          onNavigate={setTab}
+          userRole={userRole}
+          setUserRole={setUserRole}
+        />
 
         <main className="main-view animate-in">
           {renderPage(currentTab, setTab)}
