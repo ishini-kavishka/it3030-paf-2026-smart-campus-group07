@@ -38,7 +38,7 @@ const AdminBookingsPage = () => {
         body: JSON.stringify({ status, reason })
       });
       fetchBookings();
-    } catch(err) {
+    } catch (err) {
       console.error(err);
     }
   };
@@ -69,14 +69,14 @@ const AdminBookingsPage = () => {
           {bookings.map(booking => (
             <div key={booking.id} className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', position: 'relative' }}>
               <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: booking.status === 'APPROVED' ? '#10b981' : booking.status === 'PENDING' ? '#f59e0b' : '#ef4444' }} />
-              
+
               <div className="flex justify-between items-center mt-2">
                 <span className={`badge ${booking.status === 'APPROVED' ? 'badge-active' : booking.status === 'REJECTED' || booking.status === 'CANCELLED' ? 'badge-oos' : ''}`}>
                   {booking.status}
                 </span>
                 <span className="text-xs font-bold text-muted">{booking.date} | {booking.startTime} - {booking.endTime}</span>
               </div>
-              
+
               <h3 style={{ fontSize: '1.2rem', margin: 0 }}>{booking.resourceName}</h3>
               <p className="text-sm text-dim">By User: {booking.userId}</p>
               <p className="text-sm font-medium mt-1">Purpose: {booking.purpose}</p>

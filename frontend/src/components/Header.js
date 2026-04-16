@@ -60,6 +60,7 @@ const Header = ({ currentTab, onNavigate, userRole, setUserRole }) => {
   const mobileLinks = [
     { label: 'Home', tab: 'home', icon: <LayoutDashboard size={18} /> },
     { label: 'Catalogue', tab: 'catalogue', icon: <BookOpen size={18} /> },
+    { label: 'Booking', tab: 'booking', icon: <Calendar size={18} /> },
     { label: 'My Bookings', tab: 'my-bookings', icon: <Calendar size={18} /> },
     ...(userRole === 'admin' ? [
       { label: 'Dashboard', tab: 'dashboard', icon: <LayoutDashboard size={18} /> },
@@ -101,6 +102,12 @@ const Header = ({ currentTab, onNavigate, userRole, setUserRole }) => {
             {isHome ? (
               <nav className="header-nav">
                 <button onClick={() => navigate('catalogue')}>Catalogue</button>
+                <button
+                  className={currentTab === 'booking' ? 'active-nav' : ''}
+                  onClick={() => navigate('booking')}
+                >
+                  Booking
+                </button>
                 <button
                   className={currentTab === 'my-bookings' ? 'active-nav' : ''}
                   onClick={() => navigate('my-bookings')}
