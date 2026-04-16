@@ -51,7 +51,21 @@ const BookingPage = ({ setTab }) => {
     e.preventDefault();
     setErrorMsg('');
     setSuccessMsg('');
-    const url = editingId 
+
+    // Additional validation for past dates
+    const selectedDate = new Date(formData.date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize to start of day
+
+    // Adding time zone offset to ensure local date comparison is accurate
+    selectedDate.setMinutes(selectedDate.getMinutes() + selectedDate.getTimezoneOffset());
+    
+    if (selectedDate < today) {
+      setErrorMsg('You cannot select a past date for a booking.');
+      return;
+    }
+
+    const url = editingId
       ? `http://localhost:8082/api/bookings/${editingId}`
       : 'http://localhost:8082/api/bookings';
     const method = editingId ? 'PUT' : 'POST';
@@ -95,7 +109,7 @@ const BookingPage = ({ setTab }) => {
       <div className="glass-card mx-auto max-w-4xl" style={{ borderColor: '#534AB7', borderLeftWidth: '4px' }}>
         {errorMsg && <div className="error-banner mb-4"><span>{errorMsg}</span></div>}
         {successMsg && <div className="success-banner mb-4" style={{ padding: '1rem', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid #10b981', borderRadius: '8px' }}><span>{successMsg}</span></div>}
-        
+
         <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
           <div className="flex-col">
             <label className="text-xs font-bold text-muted uppercase mb-1">Resource ID</label>
@@ -107,7 +121,7 @@ const BookingPage = ({ setTab }) => {
           </div>
           <div className="flex-col">
             <label className="text-xs font-bold text-muted uppercase mb-1">Date</label>
-            <input type="date" name="date" value={formData.date} onChange={handleChange} required className="search-box input" style={{ padding: '0.8rem', borderRadius: '8px', border: '1px solid #e5e7eb' }} />
+            <input type="date" name="date" value={formData.date} onChange={handleChange} min={new Date().toISOString().split('T')[0]} required className="search-box input" style={{ padding: '0.8rem', borderRadius: '8px', border: '1px solid #e5e7eb' }} />
           </div>
           <div className="flex-col">
             <label className="text-xs font-bold text-muted uppercase mb-1">Expected Attendees</label>
