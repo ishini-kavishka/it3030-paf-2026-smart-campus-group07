@@ -9,6 +9,7 @@ import DashboardOverview from './pages/DashboardOverview';
 import MyBookingsPage from './pages/MyBookingsPage';
 import AdminBookingsPage from './pages/AdminBookingsPage';
 import HomePage from './pages/HomePage';
+import BookingPage from './pages/BookingPage';
 
 // ─── Placeholder pages for sidebar items that belong to other members ─────────
 const ComingSoon = ({ title }) => (
@@ -27,7 +28,8 @@ const renderPage = (tab, setTab) => {
     case 'dashboard': return <DashboardOverview />;
     case 'catalogue': return <CataloguePage setTab={setTab} />;
     case 'admin': return <AdminDashboard />;
-    case 'my-bookings': return <MyBookingsPage />;
+    case 'my-bookings': return <MyBookingsPage setTab={setTab} />;
+    case 'booking': return <BookingPage setTab={setTab} />;
     case 'admin-bookings': return <AdminBookingsPage />;
     case 'maintenance': return <ComingSoon title="Maintenance & Incident Ticketing" />;
     case 'notifications': return <ComingSoon title="Notifications" />;

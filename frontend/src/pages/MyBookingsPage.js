@@ -1,22 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { CalendarClock, Plus, X, Edit, Trash2 } from 'lucide-react';
 
-const MyBookingsPage = () => {
+const MyBookingsPage = ({ setTab }) => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  
-  // Form State
-  const [formData, setFormData] = useState({
-    resourceId: '',
-    date: '',
-    startTime: '',
-    endTime: '',
-    purpose: '',
-    expectedAttendees: 1
-  });
-  const [editingId, setEditingId] = useState(null);
-  const [errorMsg, setErrorMsg] = useState('');
 
   const fetchBookings = async () => {
     try {
@@ -39,51 +26,11 @@ const MyBookingsPage = () => {
     fetchBookings();
   }, []);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErrorMsg('');
-    const url = editingId 
-      ? `http://localhost:8082/api/bookings/${editingId}`
-      : 'http://localhost:8082/api/bookings';
-    const method = editingId ? 'PUT' : 'POST';
-
-    try {
-      const res = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          'x-user-id': 'user-123'
-        },
-        body: JSON.stringify(formData)
-      });
-      if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.message || 'Failed to save booking');
-      }
-      setShowForm(false);
-      setEditingId(null);
-      setFormData({ resourceId: '', date: '', startTime: '', endTime: '', purpose: '', expectedAttendees: 1 });
-      fetchBookings();
-    } catch (err) {
-      setErrorMsg(err.message);
-    }
-  };
 
   const handleEdit = (booking) => {
-    setFormData({
-      resourceId: booking.resourceId,
-      date: booking.date,
-      startTime: booking.startTime,
-      endTime: booking.endTime,
-      purpose: booking.purpose,
-      expectedAttendees: booking.expectedAttendees
-    });
-    setEditingId(booking.id);
-    setShowForm(true);
+    localStorage.setItem('editBooking', JSON.stringify(booking));
+    if (setTab) setTab('booking');
   };
 
   const handleCancel = async (id) => {
@@ -99,7 +46,7 @@ const MyBookingsPage = () => {
   };
 
   const handleDelete = async (id) => {
-    if(!window.confirm('Delete permanently?')) return;
+    if (!window.confirm('Delete permanently?')) return;
     try {
       await fetch(`http://localhost:8082/api/bookings/${id}`, {
         method: 'DELETE',
@@ -123,50 +70,14 @@ const MyBookingsPage = () => {
           <p className="hero-sub" style={{ color: '#9ca3af' }}>
             View, update, or create new bookings for lecture halls, labs, and equipment.
           </p>
-          <button className="btn btn-primary" onClick={() => setShowForm(!showForm)} style={{ background: '#534AB7', border: 'none' }}>
-            {showForm ? <X size={16} /> : <Plus size={16} />}
-            {showForm ? 'Close Form' : 'New Booking'}
+          <button className="btn btn-primary" onClick={() => { if (setTab) setTab('booking'); }} style={{ background: '#534AB7', border: 'none' }}>
+            <Plus size={16} />
+            New Booking
           </button>
         </div>
       </div>
 
-      {/* Form Area */}
-      {showForm && (
-        <div className="glass-card mb-6 animate-in" style={{ borderColor: '#534AB7', borderLeftWidth: '4px' }}>
-          <h3 className="mb-4">{editingId ? 'Update Booking' : 'Request New Booking'}</h3>
-          {errorMsg && <div className="error-banner"><span>{errorMsg}</span></div>}
-          <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <div className="flex-col">
-              <label className="text-xs font-bold text-muted uppercase">Resource ID</label>
-              <input type="text" name="resourceId" value={formData.resourceId} onChange={handleChange} required className="search-box input" style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #e5e7eb' }} />
-            </div>
-            <div className="flex-col">
-              <label className="text-xs font-bold text-muted uppercase">Purpose</label>
-              <input type="text" name="purpose" value={formData.purpose} onChange={handleChange} required className="search-box input" style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #e5e7eb' }} />
-            </div>
-            <div className="flex-col">
-              <label className="text-xs font-bold text-muted uppercase">Date</label>
-              <input type="date" name="date" value={formData.date} onChange={handleChange} required className="search-box input" style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #e5e7eb' }} />
-            </div>
-            <div className="flex-col">
-              <label className="text-xs font-bold text-muted uppercase">Expected Attendees</label>
-              <input type="number" name="expectedAttendees" value={formData.expectedAttendees} onChange={handleChange} required min="1" className="search-box input" style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #e5e7eb' }} />
-            </div>
-            <div className="flex-col">
-              <label className="text-xs font-bold text-muted uppercase">Start Time</label>
-              <input type="time" name="startTime" value={formData.startTime} onChange={handleChange} required className="search-box input" style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #e5e7eb' }} />
-            </div>
-            <div className="flex-col">
-              <label className="text-xs font-bold text-muted uppercase">End Time</label>
-              <input type="time" name="endTime" value={formData.endTime} onChange={handleChange} required className="search-box input" style={{ padding: '0.6rem', borderRadius: '8px', border: '1px solid #e5e7eb' }} />
-            </div>
-            <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>
-              <button type="button" className="btn btn-ghost" onClick={() => setShowForm(false)}>Cancel</button>
-              <button type="submit" className="btn btn-primary">{editingId ? 'Update' : 'Submit Request'}</button>
-            </div>
-          </form>
-        </div>
-      )}
+
 
       {/* Bookings List Area */}
       {loading ? (
@@ -182,17 +93,17 @@ const MyBookingsPage = () => {
           {bookings.map(booking => (
             <div key={booking.id} className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', position: 'relative' }}>
               <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: booking.status === 'APPROVED' ? '#10b981' : booking.status === 'PENDING' ? '#f59e0b' : '#ef4444' }} />
-              
+
               <div className="flex justify-between items-center mt-2">
                 <span className={`badge ${booking.status === 'APPROVED' ? 'badge-active' : booking.status === 'REJECTED' || booking.status === 'CANCELLED' ? 'badge-oos' : ''}`}>
                   {booking.status}
                 </span>
                 <span className="text-xs font-bold text-muted">{booking.date}</span>
               </div>
-              
+
               <h3 style={{ fontSize: '1.1rem', margin: 0 }}>{booking.resourceName}</h3>
               <p className="text-sm text-dim">{booking.purpose}</p>
-              
+
               <div className="flex justify-between mt-2 text-sm font-medium">
                 <span>{booking.startTime} - {booking.endTime}</span>
                 <span>👤 {booking.expectedAttendees}</span>

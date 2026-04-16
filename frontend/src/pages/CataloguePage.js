@@ -205,11 +205,12 @@ const ResourceDetailModal = ({ resource, onClose, setTab }) => {
               Close
             </button>
             {isActive && (
-              <button 
+              <button
                 onClick={() => {
                   onClose();
-                  if (setTab) setTab('my-bookings');
-                }} 
+                  localStorage.setItem('bookingResource', resource.id);
+                  if (setTab) setTab('booking');
+                }}
                 className="btn btn-primary flex-1"
                 style={{ background: meta.color, borderColor: meta.color, color: '#fff' }}
               >
