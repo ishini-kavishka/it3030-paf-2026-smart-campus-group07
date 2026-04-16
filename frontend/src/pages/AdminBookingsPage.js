@@ -62,46 +62,46 @@ const AdminBookingsPage = () => {
         </div>
       </div>
 
-      <div className="filters-section mt-6 mb-6 px-6" style={{maxWidth: '1200px', margin: '1.5rem auto 1.5rem auto', display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center'}}>
-        <div style={{display: 'flex', gap: '0.5rem', alignItems: 'center', background: 'rgba(255,255,255,0.05)', padding: '0.5rem 1rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)'}}>
-          <Filter size={16} className="text-dim" />
-          <span className="text-sm font-medium text-dim">Filters:</span>
+      <div className="toolbar" style={{ margin: '1.5rem 0', background: '#f8fafc', padding: '1rem', borderRadius: '1rem', border: '1px solid #e2e8f0' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', padding: '0.8rem 1.25rem', background: '#f1f5f9', borderRadius: '10px', color: '#64748b' }}>
+          <Filter size={16} />
+          <span className="text-sm font-medium">Filters:</span>
         </div>
         
         <input 
           type="date" 
           value={filterDate}
           onChange={(e) => setFilterDate(e.target.value)}
-          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.9rem' }}
+          className="filter-select"
         />
         
         <select 
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.9rem' }}
+          className="filter-select"
         >
-          <option value="ALL" style={{color: '#000'}}>All Statuses</option>
-          <option value="PENDING" style={{color: '#000'}}>Pending</option>
-          <option value="APPROVED" style={{color: '#000'}}>Approved</option>
-          <option value="REJECTED" style={{color: '#000'}}>Rejected</option>
-          <option value="CANCELLED" style={{color: '#000'}}>Cancelled</option>
+          <option value="ALL">All Statuses</option>
+          <option value="PENDING">Pending</option>
+          <option value="APPROVED">Approved</option>
+          <option value="REJECTED">Rejected</option>
+          <option value="CANCELLED">Cancelled</option>
         </select>
         
-        <div style={{position: 'relative', display: 'flex', alignItems: 'center', flex: 1, minWidth: '200px'}}>
-          <Search size={16} style={{position: 'absolute', left: '1rem', color: '#9ca3af'}} />
+        <div className="search-box">
+          <Search size={16} />
           <input 
             type="text" 
             placeholder="Search by Resource..."
             value={filterResource}
             onChange={(e) => setFilterResource(e.target.value)}
-            style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: '0.5rem 1rem 0.5rem 2.5rem', borderRadius: '8px', fontSize: '0.9rem' }}
           />
         </div>
 
         {(filterDate || filterStatus !== 'ALL' || filterResource) && (
           <button 
             onClick={() => { setFilterDate(''); setFilterStatus('ALL'); setFilterResource(''); }}
-            style={{ background: 'transparent', border: '1px solid #ef4444', color: '#ef4444', padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.9rem', cursor: 'pointer' }}
+            className="btn btn-ghost"
+            style={{ color: '#e11d48', borderColor: '#ffe4e6', background: '#fff1f2' }}
           >
             Clear
           </button>
