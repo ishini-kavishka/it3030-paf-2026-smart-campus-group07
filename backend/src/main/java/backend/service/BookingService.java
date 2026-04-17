@@ -34,11 +34,13 @@ public class BookingService {
         }
 
         // Conflict Checking
-        List<Booking> existingBookings = bookingRepository.findByResourceIdAndDate(request.getResourceId(), request.getDate());
-        
+        List<Booking> existingBookings = bookingRepository.findByResourceIdAndDate(request.getResourceId(),
+                request.getDate());
+
         boolean hasConflict = existingBookings.stream()
                 .filter(b -> b.getStatus() == BookingStatus.PENDING || b.getStatus() == BookingStatus.APPROVED)
-                .anyMatch(b -> request.getStartTime().isBefore(b.getEndTime()) && request.getEndTime().isAfter(b.getStartTime()));
+                .anyMatch(b -> request.getStartTime().isBefore(b.getEndTime())
+                        && request.getEndTime().isAfter(b.getStartTime()));
 
         if (hasConflict) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Resource is already booked during this time");
@@ -88,12 +90,14 @@ public class BookingService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found"));
 
         // Conflict Checking
-        List<Booking> existingBookings = bookingRepository.findByResourceIdAndDate(request.getResourceId(), request.getDate());
-        
+        List<Booking> existingBookings = bookingRepository.findByResourceIdAndDate(request.getResourceId(),
+                request.getDate());
+
         boolean hasConflict = existingBookings.stream()
                 .filter(b -> !b.getId().equals(id))
                 .filter(b -> b.getStatus() == BookingStatus.PENDING || b.getStatus() == BookingStatus.APPROVED)
-                .anyMatch(b -> request.getStartTime().isBefore(b.getEndTime()) && request.getEndTime().isAfter(b.getStartTime()));
+                .anyMatch(b -> request.getStartTime().isBefore(b.getEndTime())
+                        && request.getEndTime().isAfter(b.getStartTime()));
 
         if (hasConflict) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Time conflict with another booking");
@@ -130,7 +134,7 @@ public class BookingService {
         if (!booking.getUserId().equals(userId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not authorized");
         }
-        
+
         if (booking.getStatus() == BookingStatus.CANCELLED || booking.getStatus() == BookingStatus.REJECTED) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Booking is already cancelled or rejected");
         }
