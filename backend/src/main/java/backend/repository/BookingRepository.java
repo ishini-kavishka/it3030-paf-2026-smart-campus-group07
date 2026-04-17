@@ -18,4 +18,6 @@ public interface BookingRepository extends MongoRepository<Booking, String> {
     // and status is either PENDING or APPROVED
     @Query("{ 'resourceId': ?0, 'date': ?1, 'startTime': { $lt: ?3 }, 'endTime': { $gt: ?2 }, 'status': { $in: ['PENDING', 'APPROVED'] } }")
     List<Booking> findConflictingBookings(String resourceId, LocalDate date, LocalTime startTime, LocalTime endTime);
+
+    List<Booking> findByResourceIdAndDate(String resourceId, LocalDate date);
 }

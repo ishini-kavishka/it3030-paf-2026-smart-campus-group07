@@ -134,41 +134,93 @@ const AdminBookingsPage = () => {
         }
 
         return (
-          <div className="catalogue-grid">
-            {filteredBookings.map(booking => (
-            <div key={booking.id} className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', position: 'relative' }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: booking.status === 'APPROVED' ? '#10b981' : booking.status === 'PENDING' ? '#f59e0b' : '#ef4444' }} />
-
-              <div className="flex justify-between items-center mt-2">
-                <span className={`badge ${booking.status === 'APPROVED' ? 'badge-active' : booking.status === 'REJECTED' || booking.status === 'CANCELLED' ? 'badge-oos' : ''}`}>
-                  {booking.status}
-                </span>
-                <span className="text-xs font-bold text-muted">{booking.date} | {booking.startTime} - {booking.endTime}</span>
-              </div>
-
-              <h3 style={{ fontSize: '1.2rem', margin: 0 }}>{booking.resourceName}</h3>
-              <p className="text-sm text-dim">By User: {booking.userId}</p>
-              <p className="text-sm font-medium mt-1">Purpose: {booking.purpose}</p>
-
-              {booking.status === 'PENDING' && (
-                <div className="flex gap-2 mt-4">
-                  <button onClick={() => handleStatusChange(booking.id, 'APPROVED')} className="btn flex-1 py-1 text-xs" style={{ background: '#10b981', color: '#fff', border: 'none' }}>
-                    <CheckSquare size={14} /> Approve
-                  </button>
-                  <button onClick={() => handleStatusChange(booking.id, 'REJECTED')} className="btn flex-1 py-1 text-xs" style={{ background: '#ef4444', color: '#fff', border: 'none' }}>
-                    <XSquare size={14} /> Reject
-                  </button>
-                </div>
-              )}
-
-              {booking.rejectionReason && (
-                <div className="error-banner mt-4 mb-0" style={{ padding: '0.5rem', borderRadius: '8px' }}>
-                  <span style={{ fontSize: '0.75rem' }}>Rejected: {booking.rejectionReason}</span>
-                </div>
-              )}
+          <div className="glass-card" style={{ padding: 0, overflow: 'hidden' }}>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                <thead style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                  <tr>
+                    <th style={{ padding: '1.2rem 1.5rem', color: '#64748b', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Facility</th>
+                    <th style={{ padding: '1.2rem 1.5rem', color: '#64748b', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Requester</th>
+                    <th style={{ padding: '1.2rem 1.5rem', color: '#64748b', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Purpose</th>
+                    <th style={{ padding: '1.2rem 1.5rem', color: '#64748b', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Attendees</th>
+                    <th style={{ padding: '1.2rem 1.5rem', color: '#64748b', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Date & Schedule</th>
+                    <th style={{ padding: '1.2rem 1.5rem', color: '#64748b', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</th>
+                    <th style={{ padding: '1.2rem 1.5rem', color: '#64748b', fontWeight: 600, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'right' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredBookings.map((booking, idx) => {
+                    const isLast = idx === filteredBookings.length - 1;
+                    return (
+                      <tr 
+                        key={booking.id} 
+                        style={{ 
+                          borderBottom: isLast ? 'none' : '1px solid #f1f5f9', 
+                          transition: 'background 0.2s ease', 
+                          background: '#fff' 
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
+                        onMouseLeave={e => e.currentTarget.style.background = '#fff'}
+                      >
+                        <td style={{ padding: '1.2rem 1.5rem', verticalAlign: 'middle' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                            <div style={{ 
+                                width: '4px', 
+                                height: '24px', 
+                                borderRadius: '4px',
+                                background: booking.status === 'APPROVED' ? '#10b981' : booking.status === 'PENDING' ? '#f59e0b' : '#ef4444' 
+                            }} />
+                            <span style={{ fontWeight: 600, fontSize: '1rem', color: '#1e293b' }}>{booking.resourceName}</span>
+                          </div>
+                        </td>
+                        <td style={{ padding: '1.2rem 1.5rem', verticalAlign: 'middle' }}>
+                          <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: 500, color: '#475569' }}>{booking.userId}</p>
+                        </td>
+                        <td style={{ padding: '1.2rem 1.5rem', verticalAlign: 'middle' }}>
+                          <p style={{ margin: 0, fontSize: '0.85rem', color: '#475569' }}>{booking.purpose}</p>
+                        </td>
+                        <td style={{ padding: '1.2rem 1.5rem', verticalAlign: 'middle' }}>
+                          <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#334155', background: '#f1f5f9', padding: '0.3rem 0.6rem', borderRadius: '6px' }}>
+                            {booking.expectedAttendees || 0}
+                          </span>
+                        </td>
+                        <td style={{ padding: '1.2rem 1.5rem', verticalAlign: 'middle' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                            <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#334155' }}>{booking.date}</span>
+                            <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{booking.startTime} - {booking.endTime}</span>
+                          </div>
+                        </td>
+                        <td style={{ padding: '1.2rem 1.5rem', verticalAlign: 'middle' }}>
+                          <span className={`badge ${booking.status === 'APPROVED' ? 'badge-active' : booking.status === 'REJECTED' || booking.status === 'CANCELLED' ? 'badge-oos' : ''}`} style={{ display: 'inline-block' }}>
+                            {booking.status}
+                          </span>
+                          {booking.rejectionReason && (
+                            <div style={{ fontSize: '0.7rem', color: '#ef4444', marginTop: '0.4rem', maxWidth: '120px' }}>
+                              Reason: {booking.rejectionReason}
+                            </div>
+                          )}
+                        </td>
+                        <td style={{ padding: '1.2rem 1.5rem', verticalAlign: 'middle', textAlign: 'right' }}>
+                          {booking.status === 'PENDING' ? (
+                            <div style={{ display: 'inline-flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                              <button onClick={() => handleStatusChange(booking.id, 'APPROVED')} className="btn" style={{ padding: '0.4rem 0.8rem', background: '#ecfdf5', color: '#10b981', border: '1px solid #a7f3d0', fontSize: '0.75rem' }}>
+                                <CheckSquare size={14} /> Approve
+                              </button>
+                              <button onClick={() => handleStatusChange(booking.id, 'REJECTED')} className="btn" style={{ padding: '0.4rem 0.8rem', background: '#fef2f2', color: '#ef4444', border: '1px solid #fecaca', fontSize: '0.75rem' }}>
+                                <XSquare size={14} /> Reject
+                              </button>
+                            </div>
+                          ) : (
+                            <span style={{ fontSize: '0.8rem', color: '#cbd5e1', fontStyle: 'italic' }}>No actions</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
-          ))}
-        </div>
+          </div>
         );
       })()}
     </div>

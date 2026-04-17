@@ -34,10 +34,13 @@ public class BookingService {
         }
 
         // Conflict Checking
-        List<Booking> conflicts = bookingRepository.findConflictingBookings(
-                request.getResourceId(), request.getDate(), request.getStartTime(), request.getEndTime());
+        List<Booking> existingBookings = bookingRepository.findByResourceIdAndDate(request.getResourceId(), request.getDate());
+        
+        boolean hasConflict = existingBookings.stream()
+                .filter(b -> b.getStatus() == BookingStatus.PENDING || b.getStatus() == BookingStatus.APPROVED)
+                .anyMatch(b -> request.getStartTime().isBefore(b.getEndTime()) && request.getEndTime().isAfter(b.getStartTime()));
 
-        if (!conflicts.isEmpty()) {
+        if (hasConflict) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Resource is already booked during this time");
         }
 
@@ -84,13 +87,15 @@ public class BookingService {
         Resource resource = resourceRepository.findById(request.getResourceId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found"));
 
-        // If time changed, check conflicts again (exclude self, but for simplicity we rely on find finding others)
-        // Let's refine conflict checking:
-        List<Booking> conflicts = bookingRepository.findConflictingBookings(
-                request.getResourceId(), request.getDate(), request.getStartTime(), request.getEndTime())
-                .stream().filter(b -> !b.getId().equals(id)).collect(Collectors.toList());
+        // Conflict Checking
+        List<Booking> existingBookings = bookingRepository.findByResourceIdAndDate(request.getResourceId(), request.getDate());
+        
+        boolean hasConflict = existingBookings.stream()
+                .filter(b -> !b.getId().equals(id))
+                .filter(b -> b.getStatus() == BookingStatus.PENDING || b.getStatus() == BookingStatus.APPROVED)
+                .anyMatch(b -> request.getStartTime().isBefore(b.getEndTime()) && request.getEndTime().isAfter(b.getStartTime()));
 
-        if (!conflicts.isEmpty()) {
+        if (hasConflict) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Time conflict with another booking");
         }
 
