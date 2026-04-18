@@ -82,8 +82,8 @@ const BookingPage = ({ setTab }) => {
       if (!res.ok) {
         const errData = await res.json();
         let msg = errData.message || 'Failed to save booking';
-        // Strip Spring Boot status code prefix like '409 CONFLICT "message"'
-        msg = msg.replace(/^\d{3} [A-Z\s]+ "(.*?)"$/, '$1');
+        // Strip Spring Boot status code prefix like '409 CONFLICT "message"' or '400 BAD_REQUEST "message"'
+        msg = msg.replace(/^\d{3} [A-Z\s_]+ "(.*?)"$/, '$1');
         throw new Error(msg);
       }
       setSuccessMsg('Booking saved successfully!');
