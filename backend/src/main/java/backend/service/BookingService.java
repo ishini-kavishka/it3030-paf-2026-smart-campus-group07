@@ -33,6 +33,18 @@ public class BookingService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Resource is not active");
         }
 
+        if (request.getExpectedAttendees() != null && request.getExpectedAttendees() > resource.getCapacity()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Expected attendees exceed resource capacity (" + resource.getCapacity() + ")");
+        }
+
+        if (resource.getAvailableFrom() != null && request.getStartTime().isBefore(resource.getAvailableFrom())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Booking start time cannot be before resource available time (" + resource.getAvailableFrom() + ")");
+        }
+
+        if (resource.getAvailableTo() != null && request.getEndTime().isAfter(resource.getAvailableTo())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Booking end time cannot be after resource available time (" + resource.getAvailableTo() + ")");
+        }
+
         // Conflict Checking
         List<Booking> existingBookings = bookingRepository.findByResourceIdAndDate(request.getResourceId(),
                 request.getDate());
@@ -88,6 +100,18 @@ public class BookingService {
 
         Resource resource = resourceRepository.findById(request.getResourceId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found"));
+
+        if (request.getExpectedAttendees() != null && request.getExpectedAttendees() > resource.getCapacity()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Expected attendees exceed resource capacity (" + resource.getCapacity() + ")");
+        }
+
+        if (resource.getAvailableFrom() != null && request.getStartTime().isBefore(resource.getAvailableFrom())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Booking start time cannot be before resource available time (" + resource.getAvailableFrom() + ")");
+        }
+
+        if (resource.getAvailableTo() != null && request.getEndTime().isAfter(resource.getAvailableTo())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Booking end time cannot be after resource available time (" + resource.getAvailableTo() + ")");
+        }
 
         // Conflict Checking
         List<Booking> existingBookings = bookingRepository.findByResourceIdAndDate(request.getResourceId(),
