@@ -8,10 +8,12 @@ import {
   ShieldCheck,
   Zap,
   Layout,
-  Search
+  Search,
+  LogIn,
+  UserPlus
 } from 'lucide-react';
 
-const HomePage = ({ onNavigate }) => {
+const HomePage = ({ user, onNavigate }) => {
   const modules = [
     {
       id: 'catalogue',
@@ -53,40 +55,70 @@ const HomePage = ({ onNavigate }) => {
 
   return (
     <div className="home-page animate-in">
-      {/* ── Hero Section ────────────────────────────────────────── */}
-      <section className="home-hero">
+      {/* ── Ultra-Premium Hero Section ── */}
+      <section className="home-hero relative overflow-hidden flex flex-col items-center justify-center text-center min-h-[85vh] px-4">
+        {/* Glowing Blobs Background */}
+        <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-indigo-600/30 blur-[120px] rounded-full mix-blend-screen pointer-events-none" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-blue-600/20 blur-[150px] rounded-full mix-blend-screen pointer-events-none" />
         <div className="hero-accent-glow" />
-        <div className="hero-inner">
-          <div className="flex items-center gap-2 mb-6">
+        
+        <div className="hero-inner relative z-10 max-w-4xl mx-auto flex flex-col items-center">
+          <div className="flex items-center gap-3 mb-8 px-4 py-2 rounded-full border border-surface-border bg-surface/50 backdrop-blur-md shadow-lg">
             <span className="badge badge-indigo">PAF Assignment 2026</span>
-            <div className="divider-h" />
-            <span className="text-xs font-bold text-dim uppercase tracking-widest">v2.1.0-Stable</span>
+            <div className="w-1 h-1 rounded-full bg-surface-border" />
+            <span className="text-xs font-bold text-dim uppercase tracking-widest flex items-center gap-2">
+              <Zap size={14} className="text-yellow-500" />
+              v2.1.0-Stable Operations
+            </span>
           </div>
 
-          <h1 className="hero-main-title">
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 text-white" style={{ fontFamily: 'Outfit' }}>
             Smart Campus <br />
-            <span className="text-gradient">Operations Hub</span>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-blue-400 to-indigo-600" style={{ lineHeight: '1.2' }}>
+              Operations Engine
+            </span>
           </h1>
 
-          <p className="hero-description">
-            A production-inspired central nerve center designed to modernize university operations.
-            From facility catalogues to complex booking workflows and incident tracking—all in one seamless experience.
+          <p className="text-lg md:text-xl text-muted max-w-2xl mx-auto mb-12 leading-relaxed">
+            A production-grade central nervous system for academic enterprises.
+            Synchronizing facility catalogues, dynamic booking logic, and rapid incident ticketing into one seamless architecture.
           </p>
 
-          <div className="flex items-center gap-4 mt-10">
-            <button
-              className="btn-primary-lg"
-              onClick={() => onNavigate('catalogue')}
-            >
-              Explore Catalogue
-              <ArrowRight size={18} />
-            </button>
-            <button
-              className="btn-ghost-lg"
-              onClick={() => onNavigate('dashboard')}
-            >
-              View Dashboard
-            </button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-4">
+            {user ? (
+              <>
+                <button
+                  className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-[0_0_30px_rgba(79,70,229,0.4)] transition-all duration-300 flex items-center gap-3 hover:-translate-y-1"
+                  onClick={() => onNavigate('dashboard')}
+                >
+                  Enter Core Dashboard
+                  <ArrowRight size={20} />
+                </button>
+                <button
+                  className="px-8 py-4 bg-surface hover:bg-surface-alt border border-surface-border text-white font-bold rounded-xl transition-all duration-300 flex items-center gap-3 hover:-translate-y-1 hover:shadow-lg"
+                  onClick={() => onNavigate('catalogue')}
+                >
+                  Explore Catalogue
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  className="px-8 py-4 bg-surface hover:bg-surface-alt border border-surface-border text-white font-bold rounded-xl transition-all duration-300 flex items-center justify-center gap-3 hover:-translate-y-1 hover:shadow-lg"
+                  onClick={() => onNavigate('login')}
+                  style={{ minWidth: '180px' }}
+                >
+                  <LogIn size={20} /> Authentication
+                </button>
+                <button
+                  className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-[0_0_30px_rgba(79,70,229,0.4)] transition-all duration-300 flex items-center justify-center gap-3 hover:-translate-y-1"
+                  onClick={() => onNavigate('signup')}
+                  style={{ minWidth: '180px' }}
+                >
+                  <UserPlus size={20} /> Provision Identity
+                </button>
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -98,26 +130,27 @@ const HomePage = ({ onNavigate }) => {
           <p className="section-subtitle">A layered architecture delivering mission-critical functionality.</p>
         </div>
 
-        <div className="home-grid">
+        <div className="home-grid grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
           {modules.map((mod) => (
-            <div key={mod.id} className="module-card glass-card">
-              <div className="module-icon-wrap" style={{ background: `${mod.color}15`, color: mod.color }}>
+            <div key={mod.id} className="module-card bg-surface/50 backdrop-blur-md border border-surface-border p-6 rounded-2xl hover:-translate-y-2 hover:shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] transition-all duration-300 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-[50px] group-hover:bg-indigo-500/20 transition-all duration-500" />
+              <div className="module-icon-wrap mb-4 w-14 h-14 rounded-xl flex items-center justify-center border border-surface-border relative z-10" style={{ background: `${mod.color}15`, color: mod.color }}>
                 <mod.icon size={28} />
               </div>
-              <div className="module-content">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="module-title">{mod.title}</h3>
-                  <span className="member-badge">{mod.member}</span>
+              <div className="module-content relative z-10">
+                <div className="flex justify-between items-start mb-3">
+                  <h3 className="text-xl font-bold text-white tracking-tight">{mod.title}</h3>
+                  <span className="text-xs font-bold px-2 py-1 bg-surface-alt rounded text-dim uppercase tracking-wider">{mod.member}</span>
                 </div>
-                <p className="module-desc">{mod.desc}</p>
-                <div className="feature-tags">
+                <p className="text-muted leading-relaxed mb-6">{mod.desc}</p>
+                <div className="flex flex-wrap gap-2">
                   {mod.features.map(f => (
-                    <span key={f} className="feature-tag">{f}</span>
+                    <span key={f} className="text-xs font-medium text-dim bg-surface px-3 py-1.5 rounded-lg border border-surface-border">{f}</span>
                   ))}
                 </div>
               </div>
               <button
-                className="module-link"
+                className="module-link mt-6 flex items-center gap-2 text-sm font-bold text-indigo-400 hover:text-indigo-300 transition-colors"
                 onClick={() => onNavigate(mod.id)}
               >
                 Launch Module <Zap size={14} />

@@ -9,37 +9,37 @@ import {
   LayoutDashboard,
   Home,
   LogOut,
+  Users
 } from 'lucide-react';
 
-const Sidebar = ({ currentTab, setTab }) => {
+const Sidebar = ({ currentTab, setTab, userRole }) => {
   const menuItems = [
     {
       section: 'General',
       items: [
-        { id: 'home', icon: Home, label: 'Portal Home' },
-        { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard Overview' },
+        { id: 'home', icon: Home, label: 'Portal Home', roles: ['admin', 'student'] },
+        { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard Overview', roles: ['admin', 'student'] },
       ],
     },
     {
-      section: 'Facilities',
+      section: 'Administration',
       items: [
-        { id: 'admin', icon: ShieldCheck, label: 'Facilities & Assets' },
+        { id: 'admin', icon: ShieldCheck, label: 'Facilities & Users', roles: ['admin'] },
       ],
     },
-
     {
       section: 'Operations',
       items: [
-        { id: 'my-bookings', icon: CalendarClock, label: 'My Bookings', tag: 'Client' },
-        { id: 'admin-bookings', icon: CalendarClock, label: 'Admin Bookings', tag: 'Admin' },
-        { id: 'maintenance', icon: Wrench, label: 'Maintenance' },
-        { id: 'notifications', icon: Bell, label: 'Notifications' },
+        { id: 'my-bookings', icon: CalendarClock, label: 'My Bookings', tag: 'Client', roles: ['student'] },
+        { id: 'admin-bookings', icon: CalendarClock, label: 'Manage Bookings', tag: 'Admin', roles: ['admin'] },
+        { id: 'maintenance', icon: Wrench, label: 'Maintenance', roles: ['admin', 'student'] },
+        { id: 'notifications', icon: Bell, label: 'Notifications', roles: ['admin', 'student'] },
       ],
     },
     {
       section: 'System',
       items: [
-        { id: 'settings', icon: Settings, label: 'Settings' },
+        { id: 'settings', icon: Settings, label: 'Settings', roles: ['admin', 'student'] },
       ],
     },
   ];
@@ -64,48 +64,53 @@ const Sidebar = ({ currentTab, setTab }) => {
 
       {/* ── Navigation ────────────────────────────────────────── */}
       <nav className="nav-menu" style={{ gap: 0 }}>
-        {menuItems.map(({ section, items }) => (
-          <div key={section} style={{ marginBottom: '1.5rem' }}>
-            <p
-              style={{
-                fontSize: '0.65rem',
-                fontWeight: 800,
-                textTransform: 'uppercase',
-                letterSpacing: '0.12em',
-                color: 'var(--text-dim)',
-                padding: '0 1rem',
-                marginBottom: '0.5rem',
-              }}
-            >
-              {section}
-            </p>
-            {items.map(({ id, icon: Icon, label, tag }) => (
-              <button
-                key={id}
-                onClick={() => setTab(id)}
-                className={`nav-item ${currentTab === id ? 'active' : ''}`}
+        {menuItems.map(({ section, items }) => {
+          const visibleItems = items.filter(item => !item.roles || item.roles.includes(userRole));
+          if (visibleItems.length === 0) return null;
+
+          return (
+            <div key={section} style={{ marginBottom: '1.5rem' }}>
+              <p
+                style={{
+                  fontSize: '0.65rem',
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.12em',
+                  color: 'var(--text-dim)',
+                  padding: '0 1rem',
+                  marginBottom: '0.5rem',
+                }}
               >
-                <Icon size={18} />
-                <span className="label" style={{ flex: 1 }}>{label}</span>
-                {tag && (
-                  <span
-                    style={{
-                      fontSize: '0.6rem',
-                      fontWeight: 800,
-                      padding: '0.2rem 0.5rem',
-                      borderRadius: '50px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em',
-                      ...tagColors[tag],
-                    }}
-                  >
-                    {tag}
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
-        ))}
+                {section}
+              </p>
+              {visibleItems.map(({ id, icon: Icon, label, tag }) => (
+                <button
+                  key={id}
+                  onClick={() => setTab(id)}
+                  className={`nav-item ${currentTab === id ? 'active' : ''}`}
+                >
+                  <Icon size={18} />
+                  <span className="label" style={{ flex: 1 }}>{label}</span>
+                  {tag && (
+                    <span
+                      style={{
+                        fontSize: '0.6rem',
+                        fontWeight: 800,
+                        padding: '0.2rem 0.5rem',
+                        borderRadius: '50px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        ...tagColors[tag],
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          );
+        })}
       </nav>
 
       {/* ── Footer ────────────────────────────────────────────── */}

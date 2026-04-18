@@ -100,9 +100,9 @@ const Header = ({ currentTab, onNavigate, userRole, setUserRole }) => {
           <div className="header-center hide-mobile">
             {isHome ? (
               <nav className="header-nav">
-                <button onClick={() => navigate('catalogue')}>Catalogue</button>
-                {userRole === 'admin' && <button onClick={() => navigate('dashboard')}>Dashboard</button>}
-                {userRole === 'admin' && <button onClick={() => navigate('admin')}>Admin Hub</button>}
+                <button onClick={() => navigate('catalogue')}>Platforms</button>
+                <button onClick={() => navigate('catalogue')}>Solutions</button>
+                <button onClick={() => navigate('catalogue')}>Resources</button>
               </nav>
             ) : (
               <div className="header-search-box">
@@ -126,30 +126,29 @@ const Header = ({ currentTab, onNavigate, userRole, setUserRole }) => {
             )}
 
             <div className="header-actions">
-              {/* Role Switcher */}
-              <button
-                className={`role-toggle-btn ${userRole}`}
-                onClick={toggleRole}
-                title={`Switch to ${userRole === 'admin' ? 'Client' : 'Admin'} View`}
-              >
-                <div className="toggle-dot" />
-                <span className="hide-mobile">{userRole.toUpperCase()}</span>
-              </button>
+              {isHome ? (
+                <>
+                  <button className="btn-ghost px-4 py-2 text-sm font-bold rounded-lg hide-mobile" onClick={() => navigate('login')}>Log In</button>
+                  <button className="btn-primary px-4 py-2 text-sm font-bold rounded-lg" onClick={() => navigate('signup')}>Sign Up</button>
+                </>
+              ) : (
+                <>
+                  <button className="header-action-btn" title="View Alerts">
+                    <div className="notification-ping" />
+                    <Bell size={20} />
+                  </button>
 
-              <button className="header-action-btn" title="View Alerts">
-                <div className="notification-ping" />
-                <Bell size={20} />
-              </button>
-
-              <div className="header-user hide-mobile">
-                <div className="user-details">
-                  <span className="name">{username}</span>
-                  <span className="role">{roleDisplay}</span>
-                </div>
-                <div className="user-avatar">
-                  <User size={20} />
-                </div>
-              </div>
+                  <div className="header-user hide-mobile">
+                    <div className="user-details">
+                      <span className="name">{username}</span>
+                      <span className="role">{roleDisplay}</span>
+                    </div>
+                    <div className="user-avatar">
+                      <User size={20} />
+                    </div>
+                  </div>
+                </>
+              )}
 
               {/* Mobile Hamburger */}
               <button
@@ -161,7 +160,6 @@ const Header = ({ currentTab, onNavigate, userRole, setUserRole }) => {
               </button>
             </div>
           </div>
-
         </div>
       </header>
 
