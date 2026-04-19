@@ -173,7 +173,7 @@ const SignupPage = () => {
             await authApi.signup(formData); // calls /api/auth/signup
             // auto login
             await login(username, password);
-            navigate('/dashboard');
+            navigate('/dashboard', { state: { isNewSignup: true } });
         } catch (err) {
             let errorMsg = "Failed to complete registration.";
             

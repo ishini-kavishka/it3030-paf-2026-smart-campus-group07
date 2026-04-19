@@ -15,6 +15,7 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import UserDashboard from './pages/UserDashboard';
 import SettingsPage from './pages/SettingsPage';
+import ViewProfilePage from './pages/ViewProfilePage';
 import { useAuth } from './context/AuthContext';
 
 const ComingSoon = ({ title }) => (
@@ -31,6 +32,14 @@ const ProtectedRoute = ({ children }) => {
     const { user, loading } = useAuth();
     if (loading) return <div>Loading...</div>;
     if (!user) return <Navigate to="/login" replace />;
+    return children;
+};
+
+const AdminRoute = ({ children }) => {
+    const { user, loading } = useAuth();
+    if (loading) return <div>Loading...</div>;
+    if (!user) return <Navigate to="/login" replace />;
+    if (user.role !== 'ROLE_ADMIN') return <Navigate to="/dashboard" replace />;
     return children;
 };
 
@@ -77,14 +86,15 @@ function App() {
           
           {/* Protected Routes */}
           <Route path="/dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><ViewProfilePage /></ProtectedRoute>} />
           <Route path="/my-bookings" element={<ProtectedRoute><MyBookingsPage setTab={() => {}} /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
           <Route path="/notifications" element={<ProtectedRoute><ComingSoon title="Notifications" /></ProtectedRoute>} />
           
           {/* Admin Routes */}
-          <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/admin-bookings" element={<ProtectedRoute><AdminBookingsPage /></ProtectedRoute>} />
-          <Route path="/maintenance" element={<ProtectedRoute><ComingSoon title="Maintenance & Incident Ticketing" /></ProtectedRoute>} />
+          <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+          <Route path="/admin-bookings" element={<AdminRoute><AdminBookingsPage /></AdminRoute>} />
+          <Route path="/maintenance" element={<AdminRoute><ComingSoon title="Maintenance & Incident Ticketing" /></AdminRoute>} />
           
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

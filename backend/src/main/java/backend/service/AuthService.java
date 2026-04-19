@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 @Service
+@SuppressWarnings("null")
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -50,7 +51,8 @@ public class AuthService {
                 request.getPhoneNumber(),
                 request.getAddress(),
                 request.getProfileImage(),
-                "ROLE_USER",
+                "ROLE_STUDENT",
+                "ACTIVE",
                 LocalDateTime.now()
         );
         userRepository.save(user);
@@ -64,7 +66,7 @@ public class AuthService {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
         final String jwt = jwtUtil.generateToken(userDetails);
         
-        User user = userRepository.findByUsername(request.getUsername()).orElseThrow();
+        User user = userRepository.findByUsernameOrEmail(request.getUsername(), request.getUsername()).orElseThrow();
 
         return new AuthResponse(
                 jwt,
@@ -72,7 +74,12 @@ public class AuthService {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
-                user.getRole()
+                user.getRole(),
+                user.getPhoneNumber(),
+                user.getAddress(),
+                user.getProfileImage(),
+                user.getDob(),
+                user.getCreatedAt()
         );
     }
 
@@ -83,6 +90,10 @@ public class AuthService {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
+        if (request.getDob() != null) user.setDob(request.getDob());
+        if (request.getPhoneNumber() != null) user.setPhoneNumber(request.getPhoneNumber());
+        if (request.getAddress() != null) user.setAddress(request.getAddress());
+        
         userRepository.save(user);
 
         return new AuthResponse(
@@ -91,7 +102,12 @@ public class AuthService {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
-                user.getRole()
+                user.getRole(),
+                user.getPhoneNumber(),
+                user.getAddress(),
+                user.getProfileImage(),
+                user.getDob(),
+                user.getCreatedAt()
         );
     }
 

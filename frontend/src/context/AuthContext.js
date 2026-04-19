@@ -26,9 +26,9 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
     };
 
-    const updateProfile = async (firstName, lastName, email) => {
+    const updateProfile = async (profileData) => {
         if (!user || !user.token) return;
-        const data = await authApi.updateProfile(firstName, lastName, email, user.token);
+        const data = await authApi.updateProfile(profileData, user.token);
         setUser(data);
         return data;
     };

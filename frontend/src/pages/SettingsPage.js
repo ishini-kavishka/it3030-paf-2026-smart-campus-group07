@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { User, Lock, Trash2, LogOut, Save } from 'lucide-react';
+import { User, Lock, Trash2, LogOut, Save, LayoutDashboard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const SettingsPage = () => {
@@ -10,6 +10,10 @@ const SettingsPage = () => {
     const [firstName, setFirstName] = useState(user?.firstName || '');
     const [lastName, setLastName] = useState(user?.lastName || '');
     const [email, setEmail] = useState(user?.email || '');
+    const [dob, setDob] = useState(user?.dob || '');
+    const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || '');
+    const [address, setAddress] = useState(user?.address || '');
+    
     const [profileMsg, setProfileMsg] = useState({ type: '', text: '' });
     const [profileLoading, setProfileLoading] = useState(false);
 
@@ -20,10 +24,22 @@ const SettingsPage = () => {
 
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
-        setProfileLoading(true);
         setProfileMsg({ type: '', text: '' });
+
+        // Validations
+        const today = new Date().toISOString().split('T')[0];
+        if (dob > today) {
+            setProfileMsg({ type: 'error', text: 'Date of birth cannot be in the future.' });
+            return;
+        }
+        if (phoneNumber.length !== 10 || !/^\d{10}$/.test(phoneNumber)) {
+            setProfileMsg({ type: 'error', text: 'Phone number must be exactly 10 digits.' });
+            return;
+        }
+
+        setProfileLoading(true);
         try {
-            await updateProfile(firstName, lastName, email);
+            await updateProfile({ firstName, lastName, email, dob, phoneNumber, address });
             setProfileMsg({ type: 'success', text: 'Profile updated successfully!' });
         } catch (error) {
             setProfileMsg({ type: 'error', text: 'Failed to update profile.' });
@@ -66,7 +82,15 @@ const SettingsPage = () => {
 
     return (
         <div className="p-8 max-w-4xl mx-auto">
-            <h1 className="text-3xl font-extrabold text-gray-900 font-['Outfit'] mb-8">Account Settings</h1>
+            <div className="flex items-center justify-between mb-8">
+                <h1 className="text-3xl font-extrabold text-gray-900 font-['Outfit']">Account Settings</h1>
+                <button
+                    onClick={() => navigate('/dashboard')}
+                    className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-xl font-medium tracking-wide hover:bg-gray-200 transition-colors"
+                >
+                    <LayoutDashboard size={18} /> Dashboard
+                </button>
+            </div>
 
             {/* Profile Update Section */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
@@ -110,6 +134,41 @@ const SettingsPage = () => {
                                 required
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
+                                className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:outline-none focus:ring-[#534AB7] focus:border-[#534AB7] bg-gray-50 focus:bg-white transition-colors"
+                            />
+                        </div>
+                        <div className="flex gap-4">
+                            <div className="flex-1">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+                                <input 
+                                    type="date" 
+                                    required
+                                    max={new Date().toISOString().split('T')[0]}
+                                    value={dob}
+                                    onChange={(e) => setDob(e.target.value)}
+                                    className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:outline-none focus:ring-[#534AB7] focus:border-[#534AB7] bg-gray-50 focus:bg-white transition-colors"
+                                />
+                            </div>
+                            <div className="flex-1">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Telephone Number</label>
+                                <input 
+                                    type="tel" 
+                                    required
+                                    maxLength="10"
+                                    pattern="\d{10}"
+                                    value={phoneNumber}
+                                    onChange={(e) => setPhoneNumber(e.target.value)}
+                                    className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:outline-none focus:ring-[#534AB7] focus:border-[#534AB7] bg-gray-50 focus:bg-white transition-colors"
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                            <input 
+                                type="text" 
+                                required
+                                value={address}
+                                onChange={(e) => setAddress(e.target.value)}
                                 className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:outline-none focus:ring-[#534AB7] focus:border-[#534AB7] bg-gray-50 focus:bg-white transition-colors"
                             />
                         </div>

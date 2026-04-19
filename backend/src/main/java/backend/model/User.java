@@ -21,11 +21,12 @@ public class User {
     private String profileImage;
     
     private String role;
+    private String accountStatus;
     private LocalDateTime createdAt;
 
     public User() {}
 
-    public User(String username, String password, String firstName, String lastName, LocalDate dob, String email, String phoneNumber, String address, String profileImage, String role, LocalDateTime createdAt) {
+    public User(String username, String password, String firstName, String lastName, LocalDate dob, String email, String phoneNumber, String address, String profileImage, String role, String accountStatus, LocalDateTime createdAt) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
@@ -36,6 +37,7 @@ public class User {
         this.address = address;
         this.profileImage = profileImage;
         this.role = role;
+        this.accountStatus = accountStatus;
         this.createdAt = createdAt;
     }
 
@@ -71,6 +73,9 @@ public class User {
 
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+
+    public String getAccountStatus() { return accountStatus; }
+    public void setAccountStatus(String accountStatus) { this.accountStatus = accountStatus; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

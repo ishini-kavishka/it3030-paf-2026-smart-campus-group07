@@ -67,7 +67,7 @@ public class BookingController {
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<BookingResponseDTO> cancelBooking(
             @PathVariable @NonNull String id,
-            @RequestHeader(value = "x-user-id", defaultValue = "user-123") String userId) {
+            @RequestHeader(value = "x-user-id", defaultValue = "user-123") @NonNull String userId) {
         return ResponseEntity.ok(bookingService.cancelBooking(id, userId));
     }
 
@@ -75,7 +75,7 @@ public class BookingController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBooking(
             @PathVariable @NonNull String id,
-            @RequestHeader(value = "x-user-id", defaultValue = "user-123") String userId) {
+            @RequestHeader(value = "x-user-id", defaultValue = "user-123") @NonNull String userId) {
         bookingService.deleteBooking(id, userId);
         return ResponseEntity.noContent().build();
     }

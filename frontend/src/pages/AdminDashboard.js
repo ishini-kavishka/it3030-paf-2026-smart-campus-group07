@@ -2,12 +2,14 @@ import React, { useState, useEffect, useMemo } from 'react';
 import StatCards from '../components/StatCards';
 import ResourceCard from '../components/ResourceCard';
 import ResourceForm from '../components/ResourceForm';
+import AdminUserList from '../components/AdminUserList';
 import { resourceService } from '../services/api';
-import { Search, Plus, Filter, RefreshCw, Layers, ShieldCheck } from 'lucide-react';
+import { Search, Plus, Filter, RefreshCw, Layers, ShieldCheck, Users } from 'lucide-react';
 
 const RESOURCE_TYPES = ['CLASSROOM', 'LAB', 'AUDITORIUM', 'OFFICE', 'MEETING_ROOM'];
 
 const AdminDashboard = () => {
+  const [activeTab, setActiveTab] = useState('RESOURCES');
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -101,12 +103,36 @@ const AdminDashboard = () => {
             </span>
           </div>
           <h1 className="text-white font-bold" style={{ fontSize: '2.25rem', letterSpacing: '-0.02em' }}>
-            Resource Management
+            Admin Dashboard
           </h1>
-          <p className="text-muted">Create, update, and manage all campus facilities</p>
+          <p className="text-muted">Manage campus facilities and user accounts</p>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex gap-4">
+          <button
+              onClick={() => setActiveTab('RESOURCES')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all ${
+                  activeTab === 'RESOURCES' ? 'bg-[#6366f1] text-white shadow-lg' : 'bg-white/10 text-gray-300 hover:bg-white/20'
+              }`}
+          >
+              <ShieldCheck size={18} />
+              Resources
+          </button>
+          <button
+              onClick={() => setActiveTab('USERS')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all ${
+                  activeTab === 'USERS' ? 'bg-[#6366f1] text-white shadow-lg' : 'bg-white/10 text-gray-300 hover:bg-white/20'
+              }`}
+          >
+              <Users size={18} />
+              Users
+          </button>
+        </div>
+      </header>
+        
+      {activeTab === 'RESOURCES' ? (
+        <>
+          <div className="flex justify-end gap-3 mb-6">
           <button onClick={fetchResources} className="btn btn-ghost" title="Reload Data">
             <RefreshCw size={20} className={loading ? 'spin' : ''} />
           </button>
@@ -118,7 +144,6 @@ const AdminDashboard = () => {
             Add Resource
           </button>
         </div>
-      </header>
 
       {/* ── Stat Cards ──────────────────────────────────────────── */}
       <StatCards stats={stats} />
@@ -224,6 +249,10 @@ const AdminDashboard = () => {
         resource={selectedResource}
         onSubmit={handleCreateOrUpdate}
       />
+      </>
+      ) : (
+        <AdminUserList />
+      )}
     </>
   );
 };

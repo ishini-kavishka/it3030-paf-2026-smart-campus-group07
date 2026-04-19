@@ -33,7 +33,8 @@ public class DataSeeder implements CommandLineRunner {
                     "0701234567",
                     "123 Smart Ave, Techville",
                     "",
-                    "ROLE_USER",
+                    "ROLE_STUDENT",
+                    "ACTIVE",
                     LocalDateTime.now()
             );
 
@@ -53,6 +54,7 @@ public class DataSeeder implements CommandLineRunner {
                     "Admin Block, Smart Campus",
                     "",
                     "ROLE_ADMIN",
+                    "ACTIVE",
                     LocalDateTime.now()
             );
 

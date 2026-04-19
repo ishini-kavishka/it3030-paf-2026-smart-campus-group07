@@ -1,29 +1,27 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Calendar, Settings, Bell, User, ChevronRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const UserDashboard = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+    const isNewSignup = location.state?.isNewSignup || false;
 
     const quickLinks = [
         { title: 'My Bookings', icon: <Calendar className="w-8 h-8" />, desc: 'View and manage your current reservations', color: 'bg-blue-50 text-blue-600', path: '/my-bookings' },
         { title: 'Settings', icon: <Settings className="w-8 h-8" />, desc: 'Manage your account and preferences', color: 'bg-purple-50 text-purple-600', path: '/settings' },
         { title: 'Notifications', icon: <Bell className="w-8 h-8" />, desc: 'Check your latest alerts and updates', color: 'bg-amber-50 text-amber-600', path: '/notifications' },
-        { title: 'View Profile', icon: <User className="w-8 h-8" />, desc: 'See your public campus profile', color: 'bg-emerald-50 text-emerald-600', path: '/settings' }
+        { title: 'View Profile', icon: <User className="w-8 h-8" />, desc: 'See your public campus profile', color: 'bg-emerald-50 text-emerald-600', path: '/profile' }
     ];
 
     return (
         <div className="p-8 max-w-7xl mx-auto animate-in">
             <div className="mb-8">
                 <h1 className="text-3xl font-extrabold text-gray-900 font-['Outfit'] mb-2">
-                    Welcome back, {user?.firstName || user?.username || 'User'}! 👋
+                    {isNewSignup ? 'Welcome' : 'Welcome back'}, {user?.firstName || user?.username || 'User'}! 👋
                 </h1>
-                <p className="text-gray-500 text-lg">Here is an overview of your campus activities today.</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                 {quickLinks.map((link, idx) => (
                     <div 
                         key={idx} 

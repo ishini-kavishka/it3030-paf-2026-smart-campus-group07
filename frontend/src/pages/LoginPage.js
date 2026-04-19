@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Database, Lock, Mail } from 'lucide-react';
+import { Database, Lock, Mail, Eye, EyeOff } from 'lucide-react';
 
 const LoginPage = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     
@@ -23,8 +24,12 @@ const LoginPage = () => {
 
         setLoading(true);
         try {
-            await login(username, password);
-            navigate('/dashboard');
+            const userData = await login(username, password);
+            if (userData?.role === 'ROLE_ADMIN') {
+                navigate('/admin');
+            } else {
+                navigate('/dashboard');
+            }
         } catch (err) {
             setError('Invalid username or password');
         } finally {
@@ -55,7 +60,7 @@ const LoginPage = () => {
                     )}
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Username or Email address</label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <Mail className="h-5 w-5 text-gray-400" />
@@ -64,7 +69,7 @@ const LoginPage = () => {
                                     type="text"
                                     required
                                     className="appearance-none rounded-xl relative block w-full pl-10 px-3 py-3 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-[#534AB7] focus:border-[#534AB7] focus:z-10 sm:text-sm bg-gray-50 focus:bg-white transition-colors"
-                                    placeholder="Enter your username"
+                                    placeholder="Enter your username or email"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
                                 />
@@ -78,13 +83,20 @@ const LoginPage = () => {
                                     <Lock className="h-5 w-5 text-gray-400" />
                                 </div>
                                 <input
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     required
-                                    className="appearance-none rounded-xl relative block w-full pl-10 px-3 py-3 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-[#534AB7] focus:border-[#534AB7] focus:z-10 sm:text-sm bg-gray-50 focus:bg-white transition-colors"
+                                    className="appearance-none rounded-xl relative block w-full pl-10 pr-10 px-3 py-3 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-[#534AB7] focus:border-[#534AB7] focus:z-10 sm:text-sm bg-gray-50 focus:bg-white transition-colors"
                                     placeholder="Enter your password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
+                                <button
+                                    type="button"
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                </button>
                             </div>
                         </div>
                     </div>

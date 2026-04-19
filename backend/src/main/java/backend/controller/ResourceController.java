@@ -16,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/resources")
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001", "http://localhost:3002", "http://localhost:5173"})
+@SuppressWarnings("null")
 public class ResourceController {
 
     @Value("${demo.mode.enabled:false}")
