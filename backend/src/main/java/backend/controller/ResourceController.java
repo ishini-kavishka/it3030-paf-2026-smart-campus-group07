@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -95,7 +96,7 @@ public class ResourceController {
 
     // GET one resource by ID
     @GetMapping("/{id}")
-    public ResponseEntity<Resource> getResourceById(@PathVariable String id) {
+    public ResponseEntity<Resource> getResourceById(@PathVariable @NonNull String id) {
         Resource resource = resourceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Resource not found with id: " + id));
         return ResponseEntity.ok(resource);
@@ -103,7 +104,7 @@ public class ResourceController {
 
     // GET resources by type (path variable version)
     @GetMapping("/type/{type}")
-    public ResponseEntity<List<Resource>> getResourcesByType(@PathVariable String type) {
+    public ResponseEntity<List<Resource>> getResourcesByType(@PathVariable @NonNull String type) {
         List<Resource> resources = resourceRepository.findByType(type);
         return ResponseEntity.ok(resources);
     }
@@ -136,7 +137,7 @@ public class ResourceController {
     // UPDATE existing resource
     @PutMapping("/{id}")
     public ResponseEntity<Resource> updateResource(
-            @PathVariable String id,
+            @PathVariable @NonNull String id,
             @Valid @RequestBody Resource resourceDetails) {
 
         if (demoModeEnabled) {
@@ -164,7 +165,7 @@ public class ResourceController {
     
     // DELETE resource by ID
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteResource(@PathVariable String id) {
+    public ResponseEntity<Void> deleteResource(@PathVariable @NonNull String id) {
         if (demoModeEnabled) {
             System.out.println("ℹ️ Demo Mode: Simulating deletion of resource id '" + id + "'");
             return ResponseEntity.noContent().build();
@@ -180,7 +181,7 @@ public class ResourceController {
     // UPDATE status only (ACTIVE/OUT_OF_SERVICE)
     @PatchMapping("/{id}/status")
     public ResponseEntity<Resource> updateResourceStatus(
-            @PathVariable String id,
+            @PathVariable @NonNull String id,
             @RequestParam String status) {
 
         if (demoModeEnabled) {

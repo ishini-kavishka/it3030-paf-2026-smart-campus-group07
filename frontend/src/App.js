@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import './App.css';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -10,8 +11,12 @@ import MyBookingsPage from './pages/MyBookingsPage';
 import AdminBookingsPage from './pages/AdminBookingsPage';
 import HomePage from './pages/HomePage';
 import BookingPage from './pages/BookingPage';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
+import UserDashboard from './pages/UserDashboard';
+import SettingsPage from './pages/SettingsPage';
+import { useAuth } from './context/AuthContext';
 
-// ─── Placeholder pages for sidebar items that belong to other members ─────────
 const ComingSoon = ({ title }) => (
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: '1rem' }}>
     <div style={{ width: 64, height: 64, borderRadius: '1.5rem', background: 'rgba(99,102,241,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -22,48 +27,69 @@ const ComingSoon = ({ title }) => (
   </div>
 );
 
-const renderPage = (tab, setTab) => {
-  switch (tab) {
-    case 'home': return <HomePage onNavigate={setTab} />;
-    case 'dashboard': return <DashboardOverview />;
-    case 'catalogue': return <CataloguePage setTab={setTab} />;
-    case 'admin': return <AdminDashboard />;
-    case 'my-bookings': return <MyBookingsPage setTab={setTab} />;
-    case 'booking': return <BookingPage setTab={setTab} />;
-    case 'admin-bookings': return <AdminBookingsPage />;
-    case 'maintenance': return <ComingSoon title="Maintenance & Incident Ticketing" />;
-    case 'notifications': return <ComingSoon title="Notifications" />;
-    case 'settings': return <ComingSoon title="Settings" />;
-    default: return <DashboardOverview />;
-  }
+const ProtectedRoute = ({ children }) => {
+    const { user, loading } = useAuth();
+    if (loading) return <div>Loading...</div>;
+    if (!user) return <Navigate to="/login" replace />;
+    return children;
+};
+
+const Layout = ({ children }) => {
+    const location = useLocation();
+    const { user } = useAuth();
+    const isHome = location.pathname === '/' || location.pathname === '/home';
+    const isLogin = location.pathname === '/login';
+    const isSignup = location.pathname === '/signup';
+
+    // Disable sidebar/navbar elements on strictly standalone pages like login
+    if (isLogin || isSignup) {
+        return <>{children}</>;
+    }
+
+    return (
+        <div className={`app-layout role-${user?.role || 'client'}`}>
+            {!isHome && <Sidebar currentTab={location.pathname.substring(1)} setTab={() => {}} userRole={user?.role || 'client'} />}
+            
+            <div className="content-wrapper">
+                <Header currentTab={location.pathname.substring(1)} onNavigate={() => {}} userRole={user?.role || 'client'} setUserRole={() => {}} />
+                
+                <main className="main-view animate-in">
+                    {children}
+                </main>
+                
+                <Footer />
+            </div>
+        </div>
+    );
 };
 
 function App() {
-  const [currentTab, setTab] = useState('home');
-  const [userRole, setUserRole] = useState('admin');
-
-
   return (
-    <div className={`app-layout role-${userRole}`}>
-      {currentTab !== 'home' && (
-        <Sidebar currentTab={currentTab} setTab={setTab} userRole={userRole} />
-      )}
-
-      <div className="content-wrapper">
-        <Header
-          currentTab={currentTab}
-          onNavigate={setTab}
-          userRole={userRole}
-          setUserRole={setUserRole}
-        />
-
-        <main className="main-view animate-in">
-          {renderPage(currentTab, setTab)}
-        </main>
-
-        <Footer />
-      </div>
-    </div>
+    <BrowserRouter>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<HomePage onNavigate={() => {}} />} />
+          <Route path="/home" element={<Navigate to="/" replace />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/catalogue" element={<CataloguePage setTab={() => {}} />} />
+          <Route path="/booking" element={<BookingPage setTab={() => {}} />} />
+          
+          {/* Protected Routes */}
+          <Route path="/dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
+          <Route path="/my-bookings" element={<ProtectedRoute><MyBookingsPage setTab={() => {}} /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+          <Route path="/notifications" element={<ProtectedRoute><ComingSoon title="Notifications" /></ProtectedRoute>} />
+          
+          {/* Admin Routes */}
+          <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/admin-bookings" element={<ProtectedRoute><AdminBookingsPage /></ProtectedRoute>} />
+          <Route path="/maintenance" element={<ProtectedRoute><ComingSoon title="Maintenance & Incident Ticketing" /></ProtectedRoute>} />
+          
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Layout>
+    </BrowserRouter>
   );
 }
 

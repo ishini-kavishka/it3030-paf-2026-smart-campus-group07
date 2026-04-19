@@ -9,6 +9,7 @@ import backend.repository.BookingRepository;
 import backend.repository.ResourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -25,7 +26,7 @@ public class BookingService {
     @Autowired
     private ResourceRepository resourceRepository;
 
-    public BookingResponseDTO createBooking(BookingRequestDTO request, String userId) {
+    public BookingResponseDTO createBooking(@NonNull BookingRequestDTO request, @NonNull String userId) {
         Resource resource = resourceRepository.findById(request.getResourceId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found"));
 
@@ -74,7 +75,7 @@ public class BookingService {
         return mapToDTO(savedBooking, resource);
     }
 
-    public List<BookingResponseDTO> getUserBookings(String userId) {
+    public List<BookingResponseDTO> getUserBookings(@NonNull String userId) {
         return bookingRepository.findByUserId(userId).stream()
                 .map(this::mapToDTOWithResourceFetch)
                 .collect(Collectors.toList());
@@ -86,7 +87,7 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
-    public BookingResponseDTO updateBooking(String id, BookingRequestDTO request, String userId) {
+    public BookingResponseDTO updateBooking(@NonNull String id, @NonNull BookingRequestDTO request, @NonNull String userId) {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Booking not found"));
 
@@ -138,7 +139,7 @@ public class BookingService {
         return mapToDTO(bookingRepository.save(booking), resource);
     }
 
-    public BookingResponseDTO updateBookingStatus(String id, BookingStatus newStatus, String reason) {
+    public BookingResponseDTO updateBookingStatus(@NonNull String id, @NonNull BookingStatus newStatus, String reason) {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Booking not found"));
 
@@ -151,7 +152,7 @@ public class BookingService {
         return mapToDTOWithResourceFetch(savedBooking);
     }
 
-    public BookingResponseDTO cancelBooking(String id, String userId) {
+    public BookingResponseDTO cancelBooking(@NonNull String id, @NonNull String userId) {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Booking not found"));
 
@@ -168,7 +169,7 @@ public class BookingService {
         return mapToDTOWithResourceFetch(bookingRepository.save(booking));
     }
 
-    public void deleteBooking(String id, String userId) {
+    public void deleteBooking(@NonNull String id, @NonNull String userId) {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Booking not found"));
         if (!booking.getUserId().equals(userId)) {

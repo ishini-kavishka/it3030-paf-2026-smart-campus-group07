@@ -5,9 +5,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import org.springframework.lang.NonNull;
 
 public class BookingRequestDTO {
     @NotBlank(message = "Resource ID is required")
+    @NonNull
     private String resourceId;
 
     @NotNull(message = "Date is required")

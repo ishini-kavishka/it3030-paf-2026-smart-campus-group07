@@ -14,7 +14,7 @@ public class BackendApplication {
 	}
 
 	@Bean
-	CommandLineRunner init(MongoTemplate mongoTemplate) {
+	public CommandLineRunner init(MongoTemplate mongoTemplate) {
 		return args -> {
 			System.out.println("✅ Connected to MongoDB: " + mongoTemplate.getDb().getName());
 			System.out.println("✅ Smart Campus Backend Started Successfully!");
