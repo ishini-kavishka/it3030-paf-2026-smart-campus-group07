@@ -3,7 +3,7 @@ import { resourceService } from '../services/api';
 import {
   Search, Filter, MapPin, Users, Clock, Layers,
   Monitor, FlaskConical, Mic2, Building2, DoorOpen,
-  CheckCircle2, AlertCircle, RefreshCw, BookOpen, ChevronDown, X
+  CheckCircle2, AlertCircle, RefreshCw, BookOpen, ChevronDown, X, ArrowLeft
 } from 'lucide-react';
 
 // ─── Type icon & colour map ───────────────────────────────────────────────────
@@ -273,6 +273,39 @@ const CataloguePage = ({ setTab }) => {
       <div className="catalogue-hero">
         <div className="hero-glow" />
         <div className="hero-content">
+          <button 
+            onClick={() => { if (setTab) setTab('home'); }}
+            style={{ 
+              background: 'rgba(255, 255, 255, 0.6)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(83, 74, 183, 0.2)',
+              borderRadius: '999px',
+              padding: '0.5rem 1.25rem',
+              color: '#534AB7',
+              marginBottom: '1.5rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              fontSize: '0.85rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
+            }}
+            onMouseOver={(e) => { 
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
+                e.currentTarget.style.color = '#26215C';
+                e.currentTarget.style.transform = 'translateX(-3px)';
+            }}
+            onMouseOut={(e) => { 
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.6)';
+                e.currentTarget.style.color = '#534AB7';
+                e.currentTarget.style.transform = 'translateX(0)';
+            }}
+          >
+            <ArrowLeft size={16} /> Back
+          </button>
           <div className="hero-badge">
             <Layers size={14} />
             <span>Facilities Catalogue</span>
