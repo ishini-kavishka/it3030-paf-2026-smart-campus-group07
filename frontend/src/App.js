@@ -45,7 +45,7 @@ function App() {
 
   return (
     <div className={`app-layout role-${userRole}`}>
-      {currentTab !== 'home' && currentTab !== 'catalogue' && (
+      {currentTab !== 'home' && currentTab !== 'catalogue' && currentTab !== 'booking' && (
         <Sidebar currentTab={currentTab} setTab={setTab} userRole={userRole} />
       )}
 
@@ -61,7 +61,7 @@ function App() {
           {renderPage(currentTab, setTab)}
         </main>
 
-        {currentTab !== 'catalogue' && <Footer />}
+        {currentTab !== 'catalogue' && currentTab !== 'booking' && <Footer />}
       </div>
     </div>
   );

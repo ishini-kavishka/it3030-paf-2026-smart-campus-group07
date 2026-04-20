@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CalendarPlus } from 'lucide-react';
+import { CalendarPlus, ArrowLeft } from 'lucide-react';
 
 const BookingPage = ({ setTab }) => {
   const [formData, setFormData] = useState({
@@ -96,6 +96,37 @@ const BookingPage = ({ setTab }) => {
     <div className="catalogue-page animate-in">
       <div className="catalogue-hero" style={{ background: 'linear-gradient(135deg, #185FA5 0%, #111827 100%)', borderColor: '#185FA5', marginBottom: '2rem' }}>
         <div className="hero-content">
+          <button 
+            onClick={() => { if (setTab) setTab('catalogue'); }}
+            style={{ 
+              background: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '999px',
+              padding: '0.5rem 1.25rem',
+              color: '#ffffff',
+              marginBottom: '1.5rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              fontSize: '0.85rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
+            }}
+            onMouseOver={(e) => { 
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                e.currentTarget.style.transform = 'translateX(-3px)';
+            }}
+            onMouseOut={(e) => { 
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                e.currentTarget.style.transform = 'translateX(0)';
+            }}
+          >
+            <ArrowLeft size={16} /> Back
+          </button>
           <div className="hero-badge" style={{ color: '#185FA5', borderColor: '#185FA5' }}>
             <CalendarPlus size={14} /> Bookings
           </div>
