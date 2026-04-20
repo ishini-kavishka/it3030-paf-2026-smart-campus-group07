@@ -115,7 +115,6 @@ const Header = ({ currentTab, onNavigate, userRole, setUserRole }) => {
                   My Bookings
                 </button>
                 {userRole === 'admin' && <button onClick={() => navigate('dashboard')}>Dashboard</button>}
-                {userRole === 'admin' && <button onClick={() => navigate('admin')}>Admin Hub</button>}
               </nav>
             ) : (
               <div className="header-search-box">
@@ -156,7 +155,7 @@ const Header = ({ currentTab, onNavigate, userRole, setUserRole }) => {
 
               {isHome ? (
                 <div className="header-auth-buttons hide-mobile" style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginLeft: '1rem' }}>
-                  <button style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                  <button style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '0.85rem', fontWeight: 600, padding: '0.5rem 1.25rem', cursor: 'pointer', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
                     Login
                   </button>
                   <button 
