@@ -61,7 +61,7 @@ function App() {
           {renderPage(currentTab, setTab)}
         </main>
 
-        {currentTab !== 'catalogue' && currentTab !== 'booking' && currentTab !== 'my-bookings' && <Footer />}
+        {currentTab === 'home' && <Footer />}
       </div>
     </div>
   );
