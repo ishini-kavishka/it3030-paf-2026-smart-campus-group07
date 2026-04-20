@@ -77,20 +77,20 @@ const Header = ({ currentTab, onNavigate, userRole, setUserRole }) => {
           {/* ── Left: Logo or Breadcrumb ── */}
           <div className="header-left">
             {isHome ? (
-              <div className="header-logo" onClick={() => navigate('home')}>
+              <div className="header-logo" onClick={() => navigate('home')} role="button" tabIndex="0">
                 <div className="logo-icon-sm">
-                  <Database size={20} />
+                  <Database size={22} />
                 </div>
                 <span className="brand-name">SmartCampus</span>
               </div>
             ) : (
-              <div className="header-logo" onClick={() => navigate('home')} style={{ cursor: 'pointer' }}>
+              <div className="header-logo" onClick={() => navigate('home')} style={{ cursor: 'pointer' }} role="button" tabIndex="0">
                 <div className="logo-icon-sm">
-                  <Database size={18} />
+                  <Database size={20} />
                 </div>
                 <div className="header-breadcrumb">
                   <span className="breadcrumb-parent">Console</span>
-                  <ChevronRight size={14} className="breadcrumb-sep" />
+                  <ChevronRight size={16} className="breadcrumb-sep" />
                   <h2 className="header-page-title">{getPageTitle(currentTab)}</h2>
                 </div>
               </div>
