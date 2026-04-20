@@ -67,15 +67,15 @@ const AdminBookingsPage = () => {
           <Filter size={16} />
           <span className="text-sm font-medium">Filters:</span>
         </div>
-        
-        <input 
-          type="date" 
+
+        <input
+          type="date"
           value={filterDate}
           onChange={(e) => setFilterDate(e.target.value)}
           className="filter-select"
         />
-        
-        <select 
+
+        <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
           className="filter-select"
@@ -86,11 +86,11 @@ const AdminBookingsPage = () => {
           <option value="REJECTED">Rejected</option>
           <option value="CANCELLED">Cancelled</option>
         </select>
-        
+
         <div className="search-box">
           <Search size={16} />
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Search by Resource..."
             value={filterResource}
             onChange={(e) => setFilterResource(e.target.value)}
@@ -98,7 +98,7 @@ const AdminBookingsPage = () => {
         </div>
 
         {(filterDate || filterStatus !== 'ALL' || filterResource) && (
-          <button 
+          <button
             onClick={() => { setFilterDate(''); setFilterStatus('ALL'); setFilterResource(''); }}
             className="btn btn-ghost"
             style={{ color: '#e11d48', borderColor: '#ffe4e6', background: '#fff1f2' }}
@@ -152,23 +152,23 @@ const AdminBookingsPage = () => {
                   {filteredBookings.map((booking, idx) => {
                     const isLast = idx === filteredBookings.length - 1;
                     return (
-                      <tr 
-                        key={booking.id} 
-                        style={{ 
-                          borderBottom: isLast ? 'none' : '1px solid #f1f5f9', 
-                          transition: 'background 0.2s ease', 
-                          background: '#fff' 
+                      <tr
+                        key={booking.id}
+                        style={{
+                          borderBottom: isLast ? 'none' : '1px solid #f1f5f9',
+                          transition: 'background 0.2s ease',
+                          background: '#fff'
                         }}
                         onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
                         onMouseLeave={e => e.currentTarget.style.background = '#fff'}
                       >
                         <td style={{ padding: '1.2rem 1.5rem', verticalAlign: 'middle' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                            <div style={{ 
-                                width: '4px', 
-                                height: '24px', 
-                                borderRadius: '4px',
-                                background: booking.status === 'APPROVED' ? '#10b981' : booking.status === 'PENDING' ? '#f59e0b' : '#ef4444' 
+                            <div style={{
+                              width: '4px',
+                              height: '24px',
+                              borderRadius: '4px',
+                              background: booking.status === 'APPROVED' ? '#10b981' : booking.status === 'PENDING' ? '#f59e0b' : '#ef4444'
                             }} />
                             <span style={{ fontWeight: 600, fontSize: '1rem', color: '#1e293b' }}>{booking.resourceName}</span>
                           </div>

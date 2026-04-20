@@ -45,17 +45,15 @@ public class BookingService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Booking end time cannot be after resource available time (" + resource.getAvailableTo() + ")");
         }
 
-        // Conflict Checking
+        // Conflict Checking: Prevent more than one booking per day for the resource
         List<Booking> existingBookings = bookingRepository.findByResourceIdAndDate(request.getResourceId(),
                 request.getDate());
 
         boolean hasConflict = existingBookings.stream()
-                .filter(b -> b.getStatus() == BookingStatus.PENDING || b.getStatus() == BookingStatus.APPROVED)
-                .anyMatch(b -> request.getStartTime().isBefore(b.getEndTime())
-                        && request.getEndTime().isAfter(b.getStartTime()));
+                .anyMatch(b -> b.getStatus() == BookingStatus.PENDING || b.getStatus() == BookingStatus.APPROVED);
 
         if (hasConflict) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Resource is already booked during this time");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Resource is already booked for this day");
         }
 
         Booking booking = new Booking();
@@ -113,18 +111,16 @@ public class BookingService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Booking end time cannot be after resource available time (" + resource.getAvailableTo() + ")");
         }
 
-        // Conflict Checking
+        // Conflict Checking: Prevent more than one booking per day for the resource
         List<Booking> existingBookings = bookingRepository.findByResourceIdAndDate(request.getResourceId(),
                 request.getDate());
 
         boolean hasConflict = existingBookings.stream()
                 .filter(b -> !b.getId().equals(id))
-                .filter(b -> b.getStatus() == BookingStatus.PENDING || b.getStatus() == BookingStatus.APPROVED)
-                .anyMatch(b -> request.getStartTime().isBefore(b.getEndTime())
-                        && request.getEndTime().isAfter(b.getStartTime()));
+                .anyMatch(b -> b.getStatus() == BookingStatus.PENDING || b.getStatus() == BookingStatus.APPROVED);
 
         if (hasConflict) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Time conflict with another booking");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Resource is already booked for this day");
         }
 
         booking.setResourceId(request.getResourceId());
