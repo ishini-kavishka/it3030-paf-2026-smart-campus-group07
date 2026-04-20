@@ -29,7 +29,7 @@ const Sidebar = ({ currentTab, setTab }) => {
     {
       section: 'Operations',
       items: [
-        { id: 'admin-bookings', icon: CalendarClock, label: 'Admin Bookings', tag: 'Admin' },
+        { id: 'admin-bookings', icon: CalendarClock, label: 'Admin Bookings' },
         { id: 'maintenance', icon: Wrench, label: 'Maintenance' },
         { id: 'notifications', icon: Bell, label: 'Notifications' },
       ],
