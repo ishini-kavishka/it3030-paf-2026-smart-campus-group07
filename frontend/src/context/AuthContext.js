@@ -21,6 +21,12 @@ export const AuthProvider = ({ children }) => {
         return data;
     };
 
+    const googleLogin = async (token) => {
+        const data = await authApi.googleLogin(token);
+        setUser(data);
+        return data;
+    };
+
     const logout = () => {
         authApi.logout();
         setUser(null);
@@ -48,6 +54,7 @@ export const AuthProvider = ({ children }) => {
         <AuthContext.Provider value={{
             user,
             login,
+            googleLogin,
             logout,
             updateProfile,
             changePassword,

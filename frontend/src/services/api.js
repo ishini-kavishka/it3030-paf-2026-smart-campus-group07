@@ -9,6 +9,23 @@ const api = axios.create({
   },
 });
 
+api.interceptors.request.use((config) => {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+        try {
+            const user = JSON.parse(userStr);
+            if (user && user.token) {
+                config.headers.Authorization = `Bearer ${user.token}`;
+            }
+        } catch (e) {
+            console.error("Error parsing user from localStorage", e);
+        }
+    }
+    return config;
+}, (error) => {
+    return Promise.reject(error);
+});
+
 export const resourceService = {
   // Get all resources with optional filters
   getAllResources: async (filters = {}) => {
@@ -57,6 +74,20 @@ export const resourceService = {
     const response = await api.patch(`/resources/${id}/status`, null, {
       params: { status }
     });
+    return response.data;
+  }
+};
+
+export const notificationService = {
+  // Get all notifications for the current user
+  getNotifications: async () => {
+    const response = await api.get('/notifications');
+    return response.data;
+  },
+
+  // Delete a specific notification
+  deleteNotification: async (id) => {
+    const response = await api.delete(`/notifications/${id}`);
     return response.data;
   }
 };

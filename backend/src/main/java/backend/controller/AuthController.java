@@ -28,6 +28,11 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(request));
     }
 
+    @PostMapping("/google")
+    public ResponseEntity<AuthResponse> googleLogin(@RequestBody GoogleLoginRequest request) {
+        return ResponseEntity.ok(authService.googleLogin(request.getToken()));
+    }
+
     @PostMapping("/signup/send-otp")
     public ResponseEntity<?> sendOtp(@RequestBody OtpRequest request) {
         String email = request.getEmail();

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import './App.css';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -16,6 +17,7 @@ import SignupPage from './pages/SignupPage';
 import UserDashboard from './pages/UserDashboard';
 import SettingsPage from './pages/SettingsPage';
 import ViewProfilePage from './pages/ViewProfilePage';
+import NotificationsPage from './pages/NotificationsPage';
 import { useAuth } from './context/AuthContext';
 
 const ComingSoon = ({ title }) => (
@@ -73,7 +75,10 @@ const Layout = ({ children }) => {
 };
 
 function App() {
+  const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID || import.meta.env?.VITE_GOOGLE_CLIENT_ID || "111206311022-2cbq7i20jd0c7e555iiafkuje7ovn3h6.apps.googleusercontent.com";
+
   return (
+    <GoogleOAuthProvider clientId={clientId}>
     <BrowserRouter>
       <Layout>
         <Routes>
@@ -89,7 +94,7 @@ function App() {
           <Route path="/profile" element={<ProtectedRoute><ViewProfilePage /></ProtectedRoute>} />
           <Route path="/my-bookings" element={<ProtectedRoute><MyBookingsPage setTab={() => {}} /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
-          <Route path="/notifications" element={<ProtectedRoute><ComingSoon title="Notifications" /></ProtectedRoute>} />
+          <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
           
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
@@ -100,6 +105,7 @@ function App() {
         </Routes>
       </Layout>
     </BrowserRouter>
+    </GoogleOAuthProvider>
   );
 }
 

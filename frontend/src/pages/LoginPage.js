@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Database, Lock, Mail, Eye, EyeOff } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
 
 const LoginPage = () => {
     const [username, setUsername] = useState('');
@@ -10,8 +11,29 @@ const LoginPage = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     
-    const { login } = useAuth();
+    const { login, googleLogin } = useAuth();
     const navigate = useNavigate();
+
+    const handleGoogleSuccess = async (credentialResponse) => {
+        setLoading(true);
+        setError('');
+        try {
+            const userData = await googleLogin(credentialResponse.credential);
+            if (userData?.role === 'ROLE_ADMIN') {
+                navigate('/admin');
+            } else {
+                navigate('/dashboard');
+            }
+        } catch (err) {
+            setError('Google Sign-In failed. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleGoogleError = () => {
+        setError('Google Sign-In was unsuccessful.');
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -131,6 +153,29 @@ const LoginPage = () => {
                         </button>
                     </div>
                 </form>
+
+                <div className="mt-6">
+                    <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                            <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                        </div>
+                    </div>
+
+                    <div className="mt-6 flex justify-center">
+                        <GoogleLogin
+                            onSuccess={handleGoogleSuccess}
+                            onError={handleGoogleError}
+                            useOneTap
+                            theme="outline"
+                            size="large"
+                            text="signin_with"
+                            shape="rectangular"
+                        />
+                    </div>
+                </div>
                 
                 <div className="text-center mt-4">
                     <span className="text-sm text-gray-600">Don't have an account? </span>

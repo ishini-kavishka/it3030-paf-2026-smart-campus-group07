@@ -10,6 +10,14 @@ const login = async (username, password) => {
     return response.data;
 };
 
+const googleLogin = async (token) => {
+    const response = await axios.post(`${API_URL}/google`, { token });
+    if (response.data.token) {
+        localStorage.setItem('user', JSON.stringify(response.data));
+    }
+    return response.data;
+};
+
 const sendOtp = async (email) => {
     const response = await axios.post(`${API_URL}/signup/send-otp`, { email });
     return response.data;
@@ -56,6 +64,7 @@ const deleteProfile = async (token) => {
 
 const authApi = {
     login,
+    googleLogin,
     sendOtp,
     verifyOtp,
     signup,
