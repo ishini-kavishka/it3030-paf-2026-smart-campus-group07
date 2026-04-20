@@ -76,18 +76,18 @@ const Header = () => {
             {isHome ? (
               <div className="header-logo" onClick={() => nav('home')}>
                 <div className="logo-icon-sm">
-                  <Database size={20} />
+                  <Database size={22} />
                 </div>
                 <span className="brand-name">SmartCampus</span>
               </div>
             ) : (
               <div className="header-logo" onClick={() => nav('home')} style={{ cursor: 'pointer' }}>
                 <div className="logo-icon-sm">
-                  <Database size={18} />
+                  <Database size={20} />
                 </div>
                 <div className="header-breadcrumb">
                   <span className="breadcrumb-parent">Console</span>
-                  <ChevronRight size={14} className="breadcrumb-sep" />
+                  <ChevronRight size={16} className="breadcrumb-sep" />
                   <h2 className="header-page-title">{getPageTitle(currentTab)}</h2>
                 </div>
               </div>
@@ -138,7 +138,7 @@ const Header = () => {
                   </div>
               ) : (
                   <>
-                      <button className="header-action-btn" title="View Alerts">
+                      <button className="header-action-btn" title="View Alerts" onClick={() => nav('notifications')}>
                         <div className="notification-ping" />
                         <Bell size={20} />
                       </button>
