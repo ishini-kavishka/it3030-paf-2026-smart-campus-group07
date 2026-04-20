@@ -1,5 +1,7 @@
 package backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class AuthResponse {
     private String token;
     private String username;
@@ -10,7 +12,10 @@ public class AuthResponse {
     private String phoneNumber;
     private String address;
     private String profileImage;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private java.time.LocalDate dob;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private java.time.LocalDateTime createdAt;
 
     public AuthResponse(String token, String username, String firstName, String lastName, String email, String role, String phoneNumber, String address, String profileImage, java.time.LocalDate dob, java.time.LocalDateTime createdAt) {

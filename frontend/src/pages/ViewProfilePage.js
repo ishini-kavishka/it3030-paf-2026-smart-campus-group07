@@ -7,6 +7,17 @@ const ViewProfilePage = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
 
+    const formatDate = (dateData) => {
+        if (!dateData) return 'Not available';
+        if (Array.isArray(dateData)) {
+            // Spring Boot sometimes serializes LocalDateTime as [YYYY, MM, DD, HH, mm, seconds]
+            // JavaScript Date takes 0-indexed month (0-11)
+            return new Date(dateData[0], dateData[1] - 1, dateData[2]).toLocaleDateString();
+        }
+        const d = new Date(dateData);
+        return isNaN(d.getTime()) ? 'Not available' : d.toLocaleDateString();
+    };
+
     if (!user) return null;
 
     return (
@@ -84,7 +95,7 @@ const ViewProfilePage = () => {
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-500 font-medium">Date of Birth</p>
-                                    <p className="text-gray-900 font-medium mt-0.5">{user.dob || 'Not provided'}</p>
+                                    <p className="text-gray-900 font-medium mt-0.5">{formatDate(user.dob)}</p>
                                 </div>
                             </div>
                             
@@ -95,7 +106,7 @@ const ViewProfilePage = () => {
                                 <div>
                                     <p className="text-sm text-gray-500 font-medium">Joined Date</p>
                                     <p className="text-gray-900 font-medium mt-0.5">
-                                        {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Not available'}
+                                        {formatDate(user.createdAt)}
                                     </p>
                                 </div>
                             </div>
