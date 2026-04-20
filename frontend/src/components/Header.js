@@ -115,7 +115,6 @@ const Header = ({ currentTab, onNavigate, userRole, setUserRole }) => {
                   My Bookings
                 </button>
                 {userRole === 'admin' && <button onClick={() => navigate('dashboard')}>Dashboard</button>}
-                {userRole === 'admin' && <button onClick={() => navigate('admin')}>Admin Hub</button>}
               </nav>
             ) : (
               <div className="header-search-box">
@@ -154,15 +153,43 @@ const Header = ({ currentTab, onNavigate, userRole, setUserRole }) => {
                 <Bell size={20} />
               </button>
 
-              <div className="header-user hide-mobile">
-                <div className="user-details">
-                  <span className="name">{username}</span>
-                  <span className="role">{roleDisplay}</span>
+              {isHome ? (
+                <div className="header-auth-buttons hide-mobile" style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginLeft: '1rem' }}>
+                  <button style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '0.85rem', fontWeight: 600, padding: '0.5rem 1.25rem', cursor: 'pointer', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                    Login
+                  </button>
+                  <button 
+                    style={{ 
+                      background: 'rgba(255,255,255,0.1)', 
+                      backdropFilter: 'blur(10px)', 
+                      border: '1px solid rgba(255,255,255,0.2)', 
+                      color: '#fff', 
+                      fontSize: '0.85rem', 
+                      fontWeight: 700, 
+                      padding: '0.5rem 1.25rem', 
+                      borderRadius: '50px', 
+                      cursor: 'pointer', 
+                      letterSpacing: '0.05em', 
+                      textTransform: 'uppercase', 
+                      transition: 'all 0.3s ease' 
+                    }} 
+                    onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'} 
+                    onMouseOut={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                  >
+                    Sign Up
+                  </button>
                 </div>
-                <div className="user-avatar">
-                  <User size={20} />
+              ) : (
+                <div className="header-user hide-mobile">
+                  <div className="user-details">
+                    <span className="name">{username}</span>
+                    <span className="role">{roleDisplay}</span>
+                  </div>
+                  <div className="user-avatar">
+                    <User size={20} />
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Mobile Hamburger */}
               <button
