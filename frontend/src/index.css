@@ -1157,8 +1157,15 @@ h6 {
 }
 
 @keyframes slideDown {
-    from { transform: translateY(-20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 @media (max-width: 1024px) {
@@ -1366,6 +1373,7 @@ h6 {
         grid-template-columns: 1fr;
         gap: 3rem;
     }
+
     .footer-grid-links {
         grid-template-columns: repeat(2, 1fr);
     }
