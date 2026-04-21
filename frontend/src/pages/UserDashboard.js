@@ -1,13 +1,69 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Calendar, Settings, Bell, User, ChevronRight, ShieldCheck, CalendarClock, Wrench } from 'lucide-react';
+import { Calendar, Settings, Bell, User, ChevronRight, ShieldCheck, CalendarClock, Wrench } from 'lucide-react
+import { Calendar, Settings, Bell, User, ChevronRight, ShieldCheck, CalendarClock, BarChart3, Clock, Box } from 'lucide-react';
+
 import { useNavigate, useLocation } from 'react-router-dom';
+import { bookingService } from '../services/api';
 
 const UserDashboard = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     const isNewSignup = location.state?.isNewSignup || false;
+
+    const [adminBookings, setAdminBookings] = useState([]);
+    const [loadingStats, setLoadingStats] = useState(false);
+
+    useEffect(() => {
+        if (user?.role === 'ROLE_ADMIN') {
+            const fetchAdminData = async () => {
+                setLoadingStats(true);
+                try {
+                    const data = await bookingService.getAllBookings();
+                    setAdminBookings(data);
+                } catch (error) {
+                    console.error('Failed to fetch stats:', error);
+                } finally {
+                    setLoadingStats(false);
+                }
+            };
+            fetchAdminData();
+        }
+    }, [user]);
+
+    const { topResources, peakHours } = useMemo(() => {
+        if (user?.role !== 'ROLE_ADMIN' || !adminBookings.length) return { topResources: [], peakHours: [] };
+
+        const resourceCount = {};
+        const hourCount = {};
+
+        adminBookings.forEach(b => {
+            if (b.resourceName) {
+                resourceCount[b.resourceName] = (resourceCount[b.resourceName] || 0) + 1;
+            }
+            if (b.startTime) {
+                const hourStr = b.startTime.split(':')[0];
+                const hour = parseInt(hourStr, 10);
+                const ampm = hour >= 12 ? 'PM' : 'AM';
+                const hour12 = hour % 12 || 12;
+                const formattedHour = `${hour12}:00 ${ampm}`;
+                hourCount[formattedHour] = (hourCount[formattedHour] || 0) + 1;
+            }
+        });
+
+        const topRes = Object.entries(resourceCount)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5)
+            .map(([name, count]) => ({ name, count }));
+
+        const topHrs = Object.entries(hourCount)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5)
+            .map(([hour, count]) => ({ hour, count }));
+
+        return { topResources: topRes, peakHours: topHrs };
+    }, [adminBookings, user]);
 
     const quickLinks = [
         { title: 'My Bookings', icon: <Calendar className="w-8 h-8" />, desc: 'View and manage your current reservations', color: 'bg-blue-50 text-blue-600', path: '/my-bookings' },
@@ -67,6 +123,86 @@ const UserDashboard = () => {
                             </p>
                         </div>
                     ))}
+                </div>
+
+                {/* Usage Analytics Section */}
+                <div className="mt-10">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-sm border border-indigo-100">
+                            <BarChart3 className="w-5 h-5" />
+                        </div>
+                        <h2 className="text-2xl font-bold text-gray-900 font-['Outfit']">Usage Analytics</h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {/* Top Resources Card */}
+                        <div className="bg-white rounded-2xl p-7 shadow-sm border border-gray-100">
+                            <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-50">
+                                <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                                    <Box className="w-5 h-5 text-indigo-500" /> Top Booked Resources
+                                </h3>
+                                {loadingStats && <div className="text-xs font-semibold text-indigo-500 bg-indigo-50 px-2 py-1 rounded-md">Loading...</div>}
+                            </div>
+                            <div className="space-y-5">
+                                {!loadingStats && topResources.length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center py-6 text-gray-400">
+                                        <Box className="w-10 h-10 mb-2 opacity-50" />
+                                        <p className="text-sm font-medium">No resource data available</p>
+                                    </div>
+                                ) : (
+                                    topResources.map((res, i) => {
+                                        const maxCount = topResources[0]?.count || 1;
+                                        const pct = Math.round((res.count / maxCount) * 100);
+                                        return (
+                                            <div key={i} className="group">
+                                                <div className="flex justify-between text-sm mb-1.5">
+                                                    <span className="font-bold text-gray-700 group-hover:text-indigo-600 transition-colors">{res.name}</span>
+                                                    <span className="text-gray-500 font-semibold">{res.count} bookings</span>
+                                                </div>
+                                                <div className="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                                                    <div className="h-full bg-indigo-500 rounded-full transition-all duration-1000 ease-out" style={{ width: `${pct}%` }}></div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Peak Booking Hours Card */}
+                        <div className="bg-white rounded-2xl p-7 shadow-sm border border-gray-100">
+                            <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-50">
+                                <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                                    <Clock className="w-5 h-5 text-emerald-500" /> Peak Booking Hours
+                                </h3>
+                                {loadingStats && <div className="text-xs font-semibold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-md">Loading...</div>}
+                            </div>
+                            <div className="space-y-5">
+                                {!loadingStats && peakHours.length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center py-6 text-gray-400">
+                                        <Clock className="w-10 h-10 mb-2 opacity-50" />
+                                        <p className="text-sm font-medium">No booking hours available</p>
+                                    </div>
+                                ) : (
+                                    peakHours.map((ph, i) => {
+                                        const maxCount = peakHours[0]?.count || 1;
+                                        const pct = Math.round((ph.count / maxCount) * 100);
+                                        return (
+                                            <div key={i} className="group">
+                                                <div className="flex justify-between text-sm mb-1.5">
+                                                    <span className="font-bold text-gray-700 group-hover:text-emerald-600 transition-colors">{ph.hour}</span>
+                                                    <span className="text-gray-500 font-semibold">{ph.count} bookings</span>
+                                                </div>
+                                                <div className="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                                                    <div className="h-full bg-emerald-500 rounded-full transition-all duration-1000 ease-out" style={{ width: `${pct}%` }}></div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })
+                                )}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         );
