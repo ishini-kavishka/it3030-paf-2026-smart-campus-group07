@@ -119,10 +119,8 @@ const Sidebar = ({ currentTab, setTab }) => {
             border: '1px solid rgba(244, 63, 94, 0.1)'
           }}
           onClick={() => { 
-            if (window.confirm('Are you sure you want to sign out?')) {
-               logout();
-               navigate('/');
-            } 
+             logout();
+             navigate('/');
           }}
         >
           <LogOut size={18} />
