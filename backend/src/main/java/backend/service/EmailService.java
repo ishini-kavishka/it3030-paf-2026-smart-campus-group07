@@ -4,6 +4,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import backend.model.User;
+
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -64,5 +66,35 @@ public class EmailService {
         Random random = new Random();
         int otp = 100000 + random.nextInt(900000); // 6 digit OTP
         return String.valueOf(otp);
+    }
+
+    public void sendNewUserAlert(User user) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        // Since no spring.mail.username is reliably pulled contextually for From, hardcode to system email
+        message.setFrom("weerasuriyaminidu@gmail.com");
+        message.setTo("weerasuriyaminidu@gmail.com");
+        message.setSubject("Smart Campus - New User Registration");
+        message.setText("A new user has successfully registered on the Smart Campus platform.\n\n" +
+                "User Details:\n" +
+                "First Name: " + user.getFirstName() + "\n" +
+                "Last Name: " + user.getLastName() + "\n" +
+                "Email: " + user.getEmail() + "\n" +
+                "Joined Date: " + user.getCreatedAt() + "\n");
+        
+        emailSender.send(message);
+    }
+
+    public void sendWelcomeEmail(User user) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("weerasuriyaminidu@gmail.com");
+        message.setTo(user.getEmail());
+        message.setSubject("Welcome to Smart Campus, " + user.getFirstName() + "!");
+        message.setText("Dear " + user.getFirstName() + ",\n\n" +
+                "Welcome to Smart Campus! We are thrilled to have you on board.\n" +
+                "You can now explore facilities, book resources, and join clubs through your dashboard.\n\n" +
+                "Best regards,\n" +
+                "The Smart Campus Team");
+        
+        emailSender.send(message);
     }
 }

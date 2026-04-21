@@ -217,8 +217,15 @@ const SignupPage = () => {
         <div className="min-h-screen flex items-center justify-center bg-gray-50 from-[#534AB7]/10 to-transparent bg-gradient-to-br py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-xl w-full space-y-8 bg-white p-10 rounded-3xl shadow-xl border border-gray-100">
                 <div className="flex flex-col items-center justify-center text-center">
-                    <div className="w-12 h-12 bg-[#EEEDFE] rounded-2xl flex items-center justify-center text-[#534AB7] mb-3">
-                        <Database size={24} />
+                    <div 
+                        className="flex items-center gap-2 mb-6 cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={() => navigate('/')}
+                        title="Return to Home"
+                    >
+                        <div className="w-10 h-10 bg-white rounded-2xl flex items-center justify-center overflow-hidden shadow-sm border border-gray-100 p-1">
+                            <img src="/logo.png" alt="Smart Campus Logo" className="w-full h-full object-contain" />
+                        </div>
+                        <span className="text-2xl font-bold text-[#534AB7] font-['Outfit'] tracking-tight">SmartCampus</span>
                     </div>
                     <h2 className="text-3xl font-extrabold text-gray-900 font-['Outfit']">
                         Join SmartCampus

@@ -15,8 +15,9 @@ import java.util.function.Function;
 
 @Component
 public class JwtUtil {
-    // Generate a secure key for HS256
-    private final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    // Persistent static key across hot-reloads so user sessions don't break on server restart
+    private static final String SECRET_STRING = "SmartCampusSuperSecretKeyForJwtTokens2026!";
+    private final Key SECRET_KEY = Keys.hmacShaKeyFor(SECRET_STRING.getBytes(java.nio.charset.StandardCharsets.UTF_8));
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);

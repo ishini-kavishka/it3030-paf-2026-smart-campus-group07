@@ -58,7 +58,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login", "/api/auth/signup", "/api/auth/signup/**").permitAll()
+                        .requestMatchers("/api/auth/login", "/api/auth/google", "/api/auth/signup", "/api/auth/signup/**").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/resources", "/api/resources/**").permitAll()
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )

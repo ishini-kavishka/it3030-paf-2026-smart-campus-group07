@@ -21,11 +21,9 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 
-import backend.service.NotificationService;
-import backend.service.CustomUserDetailsService;
+
 
 @Service
-@SuppressWarnings("null")
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -34,17 +32,19 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final NotificationService notificationService;
+    private final EmailService emailService;
 
     @Autowired
     public AuthService(UserRepository userRepository, CustomUserDetailsService userDetailsService,
                        JwtUtil jwtUtil, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder,
-                       NotificationService notificationService) {
+                       NotificationService notificationService, EmailService emailService) {
         this.userRepository = userRepository;
         this.userDetailsService = userDetailsService;
         this.jwtUtil = jwtUtil;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.notificationService = notificationService;
+        this.emailService = emailService;
     }
 
     public boolean emailExists(String email) {
@@ -83,6 +83,8 @@ public class AuthService {
         );
         userRepository.save(user);
         notificationService.createNotification(request.getUsername(), "Welcome to our system, " + request.getFirstName() + "!");
+        emailService.sendNewUserAlert(user);
+        emailService.sendWelcomeEmail(user);
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -151,6 +153,8 @@ public class AuthService {
 
                     userRepository.save(user);
                     notificationService.createNotification(email, "Welcome to our system via Google, " + user.getFirstName() + "!");
+                    emailService.sendNewUserAlert(user);
+                    emailService.sendWelcomeEmail(user);
                 } else {
                     user = optionalUser.get();
                     notificationService.createNotification(user.getUsername(), "Welcome back, " + user.getFirstName() + "!");

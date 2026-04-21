@@ -75,15 +75,15 @@ const Header = () => {
           <div className="header-left">
             {isHome ? (
               <div className="header-logo" onClick={() => nav('home')}>
-                <div className="logo-icon-sm">
-                  <Database size={22} />
+                <div className="logo-icon-sm bg-white overflow-hidden p-0.5 rounded-lg border border-gray-100">
+                  <img src="/logo.png" alt="Smart Campus" className="w-full h-full object-contain" />
                 </div>
                 <span className="brand-name">SmartCampus</span>
               </div>
             ) : (
               <div className="header-logo" onClick={() => nav('home')} style={{ cursor: 'pointer' }}>
-                <div className="logo-icon-sm">
-                  <Database size={20} />
+                <div className="logo-icon-sm bg-white overflow-hidden p-0.5 rounded-lg border border-gray-100">
+                  <img src="/logo.png" alt="Smart Campus" className="w-full h-full object-contain" />
                 </div>
                 <div className="header-breadcrumb">
                   <span className="breadcrumb-parent">Console</span>
@@ -124,32 +124,41 @@ const Header = () => {
           {/* ── Right: Actions / Auth ── */}
           <div className="header-right">
             {!isHome && (
-              <div className="header-date hide-mobile" style={{marginRight: '1rem'}}>
-                <Calendar size={16} />
-                <span>{today}</span>
+              <div className="hidden md:flex items-center gap-2 bg-[#EEEDFE] text-[#534AB7] px-4 py-1.5 rounded-full font-bold text-[0.85rem] mr-4 shadow-sm border border-[#534AB7]/20">
+                <Calendar size={15} />
+                <span className="tracking-wide uppercase">{today}</span>
               </div>
             )}
 
             <div className="flex items-center gap-4">
               {!user ? (
-                  <div className="flex items-center gap-3">
-                      <Link to="/login" className="text-gray-600 font-medium hover:text-[#534AB7] px-2 transition-colors">Log In</Link>
-                      <Link to="/signup" className="text-sm font-medium bg-[#534AB7] text-[#ffffff] px-4 py-2 rounded-xl hover:bg-[#3C3489] transition-colors whitespace-nowrap shadow-sm">Sign Up</Link>
+                  <div className="flex items-center gap-4">
+                      <Link to="/login" className="text-[0.9rem] font-bold text-[#534AB7] hover:text-[#3C3489] px-4 py-2 rounded-lg bg-[#534AB7]/10 hover:bg-[#534AB7]/20 transition-all">Log In</Link>
+                      <Link to="/signup" className="text-[0.9rem] font-bold bg-gradient-to-r from-[#6366f1] to-[#4f46e5] text-white px-5 py-2.5 rounded-xl hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5 transition-all whitespace-nowrap">Sign Up</Link>
                   </div>
               ) : (
                   <>
-                      <button className="header-action-btn" title="View Alerts" onClick={() => nav('notifications')}>
-                        <div className="notification-ping" />
-                        <Bell size={20} />
-                      </button>
+                      <div className="flex items-center gap-2 mr-2">
+                        <button className="relative p-2.5 rounded-full text-gray-500 hover:bg-gray-100 hover:text-[#534AB7] transition-all" title="System Settings" onClick={() => nav('settings')}>
+                          <Settings size={20} />
+                        </button>
+                        <button className="relative p-2.5 rounded-full text-gray-500 hover:bg-gray-100 hover:text-[#534AB7] transition-all" title="View Alerts" onClick={() => nav('notifications')}>
+                          <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white" />
+                          <Bell size={20} />
+                        </button>
+                      </div>
         
-                      <div className="header-user hide-mobile" onClick={() => nav('settings')} style={{ cursor: 'pointer' }}>
+                      <div className="flex items-center gap-3 pl-4 border-l border-gray-200 cursor-pointer hover:opacity-80 transition-opacity hide-mobile" onClick={() => nav('dashboard')}>
                         <div className="user-details text-right">
-                          <span className="name block text-sm font-bold">{username}</span>
-                          <span className="role block text-xs text-gray-500">{roleDisplay}</span>
+                          <span className="block text-[0.9rem] font-extrabold text-gray-900">{username}</span>
+                          <span className="block text-[0.65rem] font-bold tracking-widest text-[#534AB7] uppercase">{roleDisplay}</span>
                         </div>
-                        <div className="user-avatar bg-[#EEEDFE] w-10 h-10 rounded-full flex items-center justify-center text-[#534AB7]">
-                          <User size={20} />
+                        <div className="w-11 h-11 rounded-full flex items-center justify-center bg-gray-100 border-2 border-[#534AB7] overflow-hidden shadow-sm">
+                          {user.profileImage ? (
+                            <img src={user.profileImage} alt={username} className="w-full h-full object-cover" />
+                          ) : (
+                            <User size={20} className="text-[#534AB7]" />
+                          )}
                         </div>
                       </div>
                   </>

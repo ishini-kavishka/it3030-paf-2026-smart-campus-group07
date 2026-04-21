@@ -59,7 +59,7 @@ const Layout = ({ children }) => {
 
     return (
         <div className={`app-layout role-${user?.role || 'client'}`}>
-            {!isHome && <Sidebar currentTab={location.pathname.substring(1)} setTab={() => {}} userRole={user?.role || 'client'} />}
+            {!isHome && user?.role === 'ROLE_ADMIN' && <Sidebar currentTab={location.pathname.substring(1)} setTab={() => {}} userRole={user?.role || 'client'} />}
             
             <div className="content-wrapper">
                 <Header currentTab={location.pathname.substring(1)} onNavigate={() => {}} userRole={user?.role || 'client'} setUserRole={() => {}} />

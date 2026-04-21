@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { notificationService } from '../services/api';
-import { Bell, Trash2, ArrowLeft, Clock } from 'lucide-react';
+import { Bell, Trash2, ArrowLeft, Clock, ShieldAlert } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const NotificationsPage = () => {
@@ -75,16 +75,29 @@ const NotificationsPage = () => {
                         </div>
                     ) : (
                         <div className="divide-y divide-gray-100">
-                            {notifications.map(notification => (
-                                <div key={notification.id} className="p-6 hover:bg-gray-50 transition-colors flex gap-4 animate-in slide-in-from-left-4 duration-300">
+                            {notifications.map(notification => {
+                                const isAdminAlert = notification.message.startsWith('ADMIN MESSAGE:');
+                                const displayMsg = isAdminAlert ? notification.message.replace('ADMIN MESSAGE:', '').trim() : notification.message;
+
+                                return (
+                                <div key={notification.id} className={`p-6 transition-colors flex gap-4 animate-in slide-in-from-left-4 duration-300 ${isAdminAlert ? 'bg-red-50/40 border-l-4 border-red-500 hover:bg-red-50/80 shadow-sm' : 'hover:bg-gray-50'}`}>
                                     <div className="mt-1">
-                                        <div className="w-2 h-2 bg-[#534AB7] rounded-full mt-2"></div>
+                                        {isAdminAlert ? (
+                                            <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 shadow-sm border border-red-200 mt-1">
+                                                <ShieldAlert className="w-4 h-4" />
+                                            </div>
+                                        ) : (
+                                            <div className="w-2 h-2 bg-[#534AB7] rounded-full mt-2"></div>
+                                        )}
                                     </div>
                                     <div className="flex-1">
-                                        <p className="text-gray-900 font-semibold mb-1">
-                                            {notification.message}
+                                        {isAdminAlert && (
+                                            <div className="text-[0.65rem] font-bold text-red-600 tracking-widest uppercase mb-1">Official System Alert</div>
+                                        )}
+                                        <p className={`${isAdminAlert ? 'text-red-900 font-bold' : 'text-gray-900 font-semibold'} mb-1`}>
+                                            {displayMsg}
                                         </p>
-                                        <div className="flex items-center text-gray-400 text-sm">
+                                        <div className={`flex items-center text-sm ${isAdminAlert ? 'text-red-500/80' : 'text-gray-400'}`}>
                                             <Clock className="w-4 h-4 mr-1" />
                                             {new Date(notification.createdAt).toLocaleString()}
                                         </div>
@@ -97,7 +110,8 @@ const NotificationsPage = () => {
                                         <Trash2 className="w-5 h-5" />
                                     </button>
                                 </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     )}
                 </div>

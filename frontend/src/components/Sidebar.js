@@ -1,4 +1,6 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import {
   Database,
   ShieldCheck,
@@ -12,6 +14,8 @@ import {
 } from 'lucide-react';
 
 const Sidebar = ({ currentTab, setTab }) => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
   const menuItems = [
     {
       section: 'General',
@@ -115,7 +119,12 @@ const Sidebar = ({ currentTab, setTab }) => {
             color: '#f43f5e',
             border: '1px solid rgba(244, 63, 94, 0.1)'
           }}
-          onClick={() => { if (window.confirm('Are you sure you want to sign out?')) window.location.reload(); }}
+          onClick={() => { 
+            if (window.confirm('Are you sure you want to sign out?')) {
+               logout();
+               navigate('/');
+            } 
+          }}
         >
           <LogOut size={18} />
           <span className="label">Log Out</span>
