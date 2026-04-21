@@ -92,9 +92,9 @@ const Header = () => {
             )}
           </div>
 
-          {/* ── Center: Nav (home only) ── */}
+          {/* ── Center: Nav ── */}
           <div className="header-center hide-mobile">
-            {isHome && (
+            {(!user || user.role !== 'ROLE_ADMIN' || isHome) && (
               <nav className="header-nav">
                 {user && (
                   <button className={currentTab === 'dashboard' ? 'active-nav' : ''} onClick={() => nav('dashboard')}>
@@ -107,6 +107,11 @@ const Header = () => {
                 <button className={currentTab === 'booking' ? 'active-nav' : ''} onClick={() => nav('booking')}>
                   Booking
                 </button>
+                {user && user.role !== 'ROLE_ADMIN' && (
+                  <button className={currentTab === 'maintenance' ? 'active-nav' : ''} onClick={() => nav('maintenance')}>
+                    Incidents
+                  </button>
+                )}
                 {user?.role === 'ROLE_ADMIN' && (
                   <button className={currentTab === 'admin' ? 'active-nav' : ''} onClick={() => nav('admin')}>
                     Admin Hub
@@ -143,7 +148,7 @@ const Header = () => {
                         </button>
                       </div>
         
-                      <div className="flex items-center gap-3 pl-4 border-l border-gray-200 cursor-pointer hover:opacity-80 transition-opacity hide-mobile" onClick={() => nav('dashboard')}>
+                      <div className="flex items-center gap-3 pl-4 border-l border-gray-200 cursor-pointer hover:opacity-80 transition-opacity hide-mobile" onClick={() => nav('profile')}>
                         <div className="user-details text-right">
                           <span className="block text-[0.9rem] font-extrabold text-gray-900">{username}</span>
                           <span className="block text-[0.65rem] font-bold tracking-widest text-[#534AB7] uppercase">{roleDisplay}</span>
