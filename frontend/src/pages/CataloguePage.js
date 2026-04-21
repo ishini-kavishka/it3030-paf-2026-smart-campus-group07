@@ -67,7 +67,12 @@ const PublicResourceCard = ({ resource, onViewDetails }) => {
           </div>
           <div className="flex items-center gap-2 text-muted text-sm">
             <Users size={14} />
-            <span>Capacity: <strong style={{ color: '#f8fafc' }}>{resource.capacity}</strong> people</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>Capacity:
+              <span style={{ background: `${meta.color}22`, color: meta.color, border: `1px solid ${meta.color}55`, borderRadius: '6px', padding: '0.1rem 0.5rem', fontWeight: 800, fontSize: '0.82rem', letterSpacing: '0.02em' }}>
+                {resource.capacity}
+              </span>
+              <span>people</span>
+            </span>
           </div>
           <div className="flex items-center gap-2 text-muted text-sm">
             <Clock size={14} />
@@ -172,7 +177,12 @@ const ResourceDetailModal = ({ resource, onClose, navigate }) => {
               <p className="text-xs text-muted uppercase tracking-widest mb-1">Capacity</p>
               <div className="flex items-center gap-2">
                 <Users size={16} style={{ color: meta.color }} />
-                <p className="text-white font-bold">{resource.capacity} people</p>
+                <p className="text-white font-bold" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ background: `${meta.color}25`, color: meta.color, border: `1.5px solid ${meta.color}55`, borderRadius: '8px', padding: '0.2rem 0.75rem', fontWeight: 800, fontSize: '1.1rem', letterSpacing: '-0.01em' }}>
+                    {resource.capacity}
+                  </span>
+                  people
+                </p>
               </div>
             </div>
             <div className="detail-item">
