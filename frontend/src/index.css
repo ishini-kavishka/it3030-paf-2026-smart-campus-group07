@@ -834,7 +834,9 @@ h6 {
 ══════════════════════════════════════════════════ */
 /* ── Header System ── */
 .app-header {
-    height: 85px;
+    height: 85px !important;
+    min-height: 85px !important;
+    max-height: 85px !important;
     display: flex;
     align-items: center;
     position: sticky;
@@ -846,6 +848,7 @@ h6 {
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.03);
+    overflow: hidden;
 }
 
 .header-container {
@@ -911,7 +914,9 @@ h6 {
 /* ── Center: Nav (Home) or Search (App) ── */
 .header-nav {
     display: flex;
-    gap: 2rem;
+    gap: 1.5rem;
+    flex-wrap: nowrap;
+    white-space: nowrap;
 }
 
 .header-nav button {

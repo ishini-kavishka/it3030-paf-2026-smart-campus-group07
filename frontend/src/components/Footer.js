@@ -63,8 +63,13 @@ const Footer = () => {
               type="email" 
               placeholder="Email address" 
               className="newsletter-input" 
+              id="newsletter-email"
             />
-            <button className="newsletter-btn" title="Subscribe">
+            <button className="newsletter-btn" title="Subscribe" onClick={() => {
+              const email = document.getElementById('newsletter-email').value;
+              if (email && email.includes('@')) alert('Successfully subscribed to operations newsletter!');
+              else alert('Please enter a valid email address.');
+            }}>
               <Send size={18} />
             </button>
           </div>

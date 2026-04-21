@@ -81,7 +81,9 @@ public class BookingController {
             @PathVariable @NonNull String id,
             org.springframework.security.core.Authentication authentication) {
         String userId = authentication.getName();
-        bookingService.deleteBooking(id, userId);
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        bookingService.deleteBooking(id, userId, isAdmin);
         return ResponseEntity.noContent().build();
     }
 }
