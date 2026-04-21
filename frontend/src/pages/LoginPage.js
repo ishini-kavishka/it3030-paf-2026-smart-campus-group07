@@ -19,11 +19,7 @@ const LoginPage = () => {
         setError('');
         try {
             const userData = await googleLogin(credentialResponse.credential);
-            if (userData?.role === 'ROLE_ADMIN') {
-                navigate('/admin');
-            } else {
-                navigate('/dashboard');
-            }
+            navigate('/dashboard');
         } catch (err) {
             setError('Google Sign-In failed. Please try again.');
         } finally {
@@ -47,11 +43,7 @@ const LoginPage = () => {
         setLoading(true);
         try {
             const userData = await login(username, password);
-            if (userData?.role === 'ROLE_ADMIN') {
-                navigate('/admin');
-            } else {
-                navigate('/dashboard');
-            }
+            navigate('/dashboard');
         } catch (err) {
             setError('Invalid username or password');
         } finally {

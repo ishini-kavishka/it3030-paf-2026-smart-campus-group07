@@ -237,19 +237,23 @@ const SettingsPage = () => {
                 <div className="bg-red-50/50 border-b border-red-100 px-6 py-4">
                     <h2 className="text-lg font-semibold text-red-700 font-['Outfit']">Danger Zone</h2>
                 </div>
-                <div className="p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div>
-                        <p className="text-gray-900 font-medium">Session Management</p>
-                        <p className="text-sm text-gray-500">Log out from your current session.</p>
-                    </div>
-                    <button 
-                        onClick={handleLogout}
-                        className="flex items-center gap-2 px-5 py-2 rounded-xl border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors w-full sm:w-auto justify-center"
-                    >
-                        <LogOut size={18} /> Log Out
-                    </button>
-                </div>
-                <div className="border-t border-gray-100"></div>
+                {user?.role !== 'ROLE_ADMIN' && (
+                    <>
+                        <div className="p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div>
+                                <p className="text-gray-900 font-medium">Session Management</p>
+                                <p className="text-sm text-gray-500">Log out from your current session.</p>
+                            </div>
+                            <button 
+                                onClick={handleLogout}
+                                className="flex items-center gap-2 px-5 py-2 rounded-xl border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors w-full sm:w-auto justify-center"
+                            >
+                                <LogOut size={18} /> Log Out
+                            </button>
+                        </div>
+                        <div className="border-t border-gray-100"></div>
+                    </>
+                )}
                 <div className="p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
                         <p className="text-gray-900 font-medium">Delete Account</p>

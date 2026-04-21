@@ -834,16 +834,18 @@ h6 {
 ══════════════════════════════════════════════════ */
 /* ── Header System ── */
 .app-header {
-    height: 100px;
+    height: 85px;
     display: flex;
     align-items: center;
     position: sticky;
     top: 0;
     z-index: 1000;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    background: linear-gradient(135deg, var(--primary) 0%, #3C3489 100%);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 20px -5px rgba(83, 74, 183, 0.3);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.03);
 }
 
 .header-container {
@@ -872,7 +874,7 @@ h6 {
 }
 
 .header-logo .brand-name {
-    color: #ffffff;
+    color: #111827;
 }
 
 .header-logo:hover {
@@ -902,7 +904,7 @@ h6 {
 .header-page-title {
     font-size: 1.1rem;
     font-weight: 700;
-    color: #ffffff;
+    color: #111827;
     letter-spacing: -0.01em;
 }
 
@@ -917,14 +919,16 @@ h6 {
     border: none;
     font-size: 0.9rem;
     font-weight: 600;
-    color: #94a3b8;
+    color: #6b7280;
     cursor: pointer;
     transition: var(--transition);
     position: relative;
+    padding: 0.5rem 0;
 }
 
-.header-nav button:hover {
-    color: #ffffff;
+.header-nav button:hover,
+.header-nav button.active-nav {
+    color: #111827;
 }
 
 .header-nav button::after {
@@ -998,7 +1002,7 @@ h6 {
 .header-action-btn {
     background: transparent;
     border: none;
-    color: #94a3b8;
+    color: #6b7280;
     width: 38px;
     height: 38px;
     border-radius: 10px;
@@ -1042,9 +1046,9 @@ h6 {
 }
 
 .user-details .name {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #111827;
 }
 
 .user-details .role {
@@ -1091,9 +1095,9 @@ h6 {
 }
 
 .mobile-menu-btn {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #111827;
     width: 40px;
     height: 40px;
     border-radius: 10px;
@@ -1105,7 +1109,7 @@ h6 {
 }
 
 .mobile-menu-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.1);
 }
 
 .show-mobile {

@@ -4,8 +4,6 @@
 
 .hp-root {
     width: 100%;
-    margin-top: -2.5rem; /* pull up from default padding */
-    margin-bottom: -2.5rem;
     position: relative;
     overflow-x: hidden;
 }
@@ -20,7 +18,8 @@
     background: #0B0E14; /* Deep premium dark background */
     color: #ffffff;
     overflow: hidden;
-    border-radius: 0 0 2rem 2rem;
+    border-radius: 2rem;
+    box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.5);
 }
 
 .hp-hero-bg {

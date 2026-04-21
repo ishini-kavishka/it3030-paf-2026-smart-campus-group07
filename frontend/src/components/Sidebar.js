@@ -84,7 +84,7 @@ const Sidebar = ({ currentTab, setTab }) => {
             {items.map(({ id, icon: Icon, label, tag }) => (
               <button
                 key={id}
-                onClick={() => setTab(id)}
+                onClick={() => navigate(`/${id}`)}
                 className={`nav-item ${currentTab === id ? 'active' : ''}`}
               >
                 <Icon size={18} />
@@ -137,7 +137,7 @@ const Sidebar = ({ currentTab, setTab }) => {
             color: 'rgba(255,255,255,0.5)',
             border: '1px solid rgba(255,255,255,0.06)'
           }}
-          onClick={() => setTab('home')}
+          onClick={() => navigate('/')}
         >
           <Home size={18} />
           <span className="label">Back to Home</span>

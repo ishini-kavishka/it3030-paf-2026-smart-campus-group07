@@ -86,8 +86,8 @@ const Header = () => {
                   <img src="/logo.png" alt="Smart Campus" className="w-full h-full object-contain" />
                 </div>
                 <div className="header-breadcrumb">
-                  <span className="breadcrumb-parent">Console</span>
-                  <ChevronRight size={16} className="breadcrumb-sep" />
+                  <span className="breadcrumb-parent font-['Outfit'] font-bold tracking-tight text-gray-800">SmartCampus</span>
+                  <ChevronRight size={16} className="breadcrumb-sep text-gray-400" />
                   <h2 className="header-page-title">{getPageTitle(currentTab)}</h2>
                 </div>
               </div>
