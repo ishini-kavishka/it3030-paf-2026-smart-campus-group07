@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import '../HomePage.css';
 import {
   ArrowRight,
   BookOpen,

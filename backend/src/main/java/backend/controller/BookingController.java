@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,8 +25,9 @@ public class BookingController {
     // POST /api/bookings
     @PostMapping
     public ResponseEntity<BookingResponseDTO> createBooking(
-            @Valid @RequestBody BookingRequestDTO request,
-            @RequestHeader(value = "x-user-id", defaultValue = "user-123") String userId) {
+            @Valid @RequestBody @NonNull BookingRequestDTO request,
+            org.springframework.security.core.Authentication authentication) {
+        String userId = authentication.getName();
         BookingResponseDTO response = bookingService.createBooking(request, userId);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -33,7 +35,8 @@ public class BookingController {
     // GET /api/bookings/my
     @GetMapping("/my")
     public ResponseEntity<List<BookingResponseDTO>> getMyBookings(
-            @RequestHeader(value = "x-user-id", defaultValue = "user-123") String userId) {
+            org.springframework.security.core.Authentication authentication) {
+        String userId = authentication.getName();
         return ResponseEntity.ok(bookingService.getUserBookings(userId));
     }
 
@@ -46,16 +49,17 @@ public class BookingController {
     // PUT /api/bookings/{id}
     @PutMapping("/{id}")
     public ResponseEntity<BookingResponseDTO> updateBooking(
-            @PathVariable String id,
-            @Valid @RequestBody BookingRequestDTO request,
-            @RequestHeader(value = "x-user-id", defaultValue = "user-123") String userId) {
+            @PathVariable @NonNull String id,
+            @Valid @RequestBody @NonNull BookingRequestDTO request,
+            org.springframework.security.core.Authentication authentication) {
+        String userId = authentication.getName();
         return ResponseEntity.ok(bookingService.updateBooking(id, request, userId));
     }
 
     // PATCH /api/bookings/{id}/status  -- For Admin approval/rejection
     @PatchMapping("/{id}/status")
     public ResponseEntity<BookingResponseDTO> updateBookingStatus(
-            @PathVariable String id,
+            @PathVariable @NonNull String id,
             @RequestBody Map<String, String> updates) {
         BookingStatus status = BookingStatus.valueOf(updates.get("status"));
         String reason = updates.get("reason");
@@ -65,16 +69,18 @@ public class BookingController {
     // PATCH /api/bookings/{id}/cancel
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<BookingResponseDTO> cancelBooking(
-            @PathVariable String id,
-            @RequestHeader(value = "x-user-id", defaultValue = "user-123") String userId) {
+            @PathVariable @NonNull String id,
+            org.springframework.security.core.Authentication authentication) {
+        String userId = authentication.getName();
         return ResponseEntity.ok(bookingService.cancelBooking(id, userId));
     }
 
     // DELETE /api/bookings/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBooking(
-            @PathVariable String id,
-            @RequestHeader(value = "x-user-id", defaultValue = "user-123") String userId) {
+            @PathVariable @NonNull String id,
+            org.springframework.security.core.Authentication authentication) {
+        String userId = authentication.getName();
         bookingService.deleteBooking(id, userId);
         return ResponseEntity.noContent().build();
     }

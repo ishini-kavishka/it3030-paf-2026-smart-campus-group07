@@ -1,5 +1,5 @@
 import React from 'react';
-import { Database, Github, Globe, Heart, Twitter, Linkedin, Send } from 'lucide-react';
+import { Github, Globe, Heart, Twitter, Linkedin, Send } from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -8,8 +8,8 @@ const Footer = () => {
     <footer className="api-footer">
       <div className="footer-content">
         <div className="footer-brand">
-          <div className="logo-icon-lg">
-            <Database size={24} />
+          <div className="logo-icon-lg" style={{ background: '#fff', padding: '6px', borderRadius: '12px', width: '48px', height: '48px' }}>
+            <img src="/logo.png" alt="SmartCampus" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <h2 className="brand-title-lg">SmartCampus Ops</h2>
           <p className="newsletter-text">

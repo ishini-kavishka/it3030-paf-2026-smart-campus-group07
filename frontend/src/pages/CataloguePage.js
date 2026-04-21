@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { resourceService } from '../services/api';
 import {
   Search, Filter, MapPin, Users, Clock, Layers,
@@ -66,7 +67,12 @@ const PublicResourceCard = ({ resource, onViewDetails }) => {
           </div>
           <div className="flex items-center gap-2 text-muted text-sm">
             <Users size={14} />
-            <span>Capacity: <strong style={{ color: '#f8fafc' }}>{resource.capacity}</strong> people</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>Capacity:
+              <span style={{ background: `${meta.color}22`, color: meta.color, border: `1px solid ${meta.color}55`, borderRadius: '6px', padding: '0.1rem 0.5rem', fontWeight: 800, fontSize: '0.82rem', letterSpacing: '0.02em' }}>
+                {resource.capacity}
+              </span>
+              <span>people</span>
+            </span>
           </div>
           <div className="flex items-center gap-2 text-muted text-sm">
             <Clock size={14} />
@@ -102,7 +108,7 @@ const PublicResourceCard = ({ resource, onViewDetails }) => {
 };
 
 // ─── Detail Modal ─────────────────────────────────────────────────────────────
-const ResourceDetailModal = ({ resource, onClose, setTab }) => {
+const ResourceDetailModal = ({ resource, onClose, navigate }) => {
   if (!resource) return null;
   const meta = getTypeMeta(resource.type);
   const Icon = meta.icon;
@@ -171,7 +177,12 @@ const ResourceDetailModal = ({ resource, onClose, setTab }) => {
               <p className="text-xs text-muted uppercase tracking-widest mb-1">Capacity</p>
               <div className="flex items-center gap-2">
                 <Users size={16} style={{ color: meta.color }} />
-                <p className="text-white font-bold">{resource.capacity} people</p>
+                <p className="text-white font-bold" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ background: `${meta.color}25`, color: meta.color, border: `1.5px solid ${meta.color}55`, borderRadius: '8px', padding: '0.2rem 0.75rem', fontWeight: 800, fontSize: '1.1rem', letterSpacing: '-0.01em' }}>
+                    {resource.capacity}
+                  </span>
+                  people
+                </p>
               </div>
             </div>
             <div className="detail-item">
@@ -209,7 +220,7 @@ const ResourceDetailModal = ({ resource, onClose, setTab }) => {
                 onClick={() => {
                   onClose();
                   localStorage.setItem('bookingResource', resource.id);
-                  if (setTab) setTab('booking');
+                  if (navigate) navigate('/booking');
                 }}
                 className="btn btn-primary flex-1"
                 style={{ background: meta.color, borderColor: meta.color, color: '#fff' }}
@@ -225,7 +236,8 @@ const ResourceDetailModal = ({ resource, onClose, setTab }) => {
 };
 
 // ─── Main Catalogue Page ──────────────────────────────────────────────────────
-const CataloguePage = ({ setTab }) => {
+const CataloguePage = () => {
+  const navigate = useNavigate();
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -274,7 +286,7 @@ const CataloguePage = ({ setTab }) => {
         <div className="hero-glow" />
         <div className="hero-content">
           <button 
-            onClick={() => { if (setTab) setTab('home'); }}
+            onClick={() => { navigate('/'); }}
             style={{ 
               background: 'rgba(255, 255, 255, 0.6)',
               backdropFilter: 'blur(10px)',
@@ -482,7 +494,7 @@ const CataloguePage = ({ setTab }) => {
         <ResourceDetailModal
           resource={selectedResource}
           onClose={() => setSelectedResource(null)}
-          setTab={setTab}
+          navigate={navigate}
         />
       )}
     </div>
