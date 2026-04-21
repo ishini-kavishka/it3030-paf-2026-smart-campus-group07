@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, CheckSquare, XSquare, Search, Filter } from 'lucide-react';
+import { ShieldCheck, CheckSquare, XSquare, Search, Filter, Download } from 'lucide-react';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const AdminBookingsPage = () => {
   const [bookings, setBookings] = useState([]);
@@ -47,6 +49,115 @@ const AdminBookingsPage = () => {
       console.error(err);
     }
   };
+
+  const filteredBookings = bookings.filter(booking => {
+    if (filterDate && booking.date !== filterDate) return false;
+    if (filterStatus !== 'ALL' && booking.status !== filterStatus) return false;
+    if (filterResource && booking.resourceName && !booking.resourceName.toLowerCase().includes(filterResource.toLowerCase())) return false;
+    return true;
+  });
+
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    
+    // Header Background
+    doc.setFillColor(83, 74, 183);
+    doc.rect(0, 0, doc.internal.pageSize.width, 40, 'F');
+    
+    // Header Text
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(22);
+    doc.setFont("helvetica", "bold");
+    doc.text('SMART CAMPUS HUB', 14, 20);
+    
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "normal");
+    doc.text('Admin Bookings Report', 14, 30);
+    
+    // Generation Details & Summary
+    doc.setTextColor(100, 100, 100);
+    doc.setFontSize(10);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 50);
+    
+    const totalBookings = filteredBookings.length;
+    const pendingBookings = filteredBookings.filter(b => b.status === 'PENDING').length;
+    doc.setTextColor(50, 50, 50);
+    doc.text(`Total Bookings: ${totalBookings}   |   Pending: ${pendingBookings}`, 14, 58);
+
+    const tableColumn = ["Facility", "Requester", "Purpose", "Attendees", "Date", "Schedule", "Status"];
+    const tableRows = [];
+
+    filteredBookings.forEach(booking => {
+      const bookingData = [
+        booking.resourceName || 'N/A',
+        booking.userId || 'N/A',
+        booking.purpose || 'N/A',
+        booking.expectedAttendees || 0,
+        booking.date || 'N/A',
+        `${booking.startTime || ''} - ${booking.endTime || ''}`,
+        booking.status || 'N/A'
+      ];
+      tableRows.push(bookingData);
+    });
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 65,
+      theme: 'striped',
+      styles: { 
+        fontSize: 8.5,
+        font: 'helvetica',
+        cellPadding: { top: 4, right: 3, bottom: 4, left: 3 },
+      },
+      headStyles: { 
+        fillColor: [83, 74, 183], 
+        textColor: 255,
+        fontStyle: 'bold',
+        halign: 'left'
+      },
+      bodyStyles: {
+        textColor: [50, 50, 50],
+        valign: 'middle'
+      },
+      alternateRowStyles: {
+        fillColor: [248, 250, 252]
+      },
+      columnStyles: {
+        0: { fontStyle: 'bold', cellWidth: 25 },       // Facility
+        1: { cellWidth: 22 },                          // Requester
+        2: { cellWidth: 'auto' },                      // Purpose
+        3: { halign: 'center', cellWidth: 20 },        // Attendees
+        4: { cellWidth: 22 },                          // Date
+        5: { cellWidth: 28 },                          // Schedule
+        6: { fontStyle: 'bold', halign: 'center', cellWidth: 24 } // Status
+      },
+      didParseCell: function (data) {
+        if (data.section === 'body' && data.column.index === 6) {
+            const status = data.cell.text[0];
+            if (status === 'APPROVED') {
+              data.cell.styles.textColor = [16, 185, 129];
+            } else if (status === 'REJECTED' || status === 'CANCELLED') {
+              data.cell.styles.textColor = [239, 68, 68];
+            } else if (status === 'PENDING') {
+              data.cell.styles.textColor = [245, 158, 11];
+            }
+        }
+      }
+    });
+
+    // Add footer with page numbers
+    const pageCount = doc.internal.getNumberOfPages();
+    for(let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(150);
+        doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 10, {
+            align: 'center'
+        });
+    }
+
+    doc.save('Admin_Bookings_Report.pdf');  };
 
   return (
     <div className="catalogue-page animate-in">
@@ -107,6 +218,27 @@ const AdminBookingsPage = () => {
             Clear
           </button>
         )}
+
+        <button
+          onClick={generatePDF}
+          className="btn"
+          style={{
+            marginLeft: 'auto',
+            background: '#4f46e5',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '12px',
+            padding: '0.6rem 1.2rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            fontWeight: 600,
+            boxShadow: '0 4px 12px rgba(79, 70, 229, 0.2)'
+          }}
+        >
+          <Download size={16} />
+          Export PDF
+        </button>
       </div>
 
       {loading ? (
@@ -117,13 +249,6 @@ const AdminBookingsPage = () => {
           <h3>No Bookings to Manage</h3>
         </div>
       ) : (() => {
-        const filteredBookings = bookings.filter(booking => {
-          if (filterDate && booking.date !== filterDate) return false;
-          if (filterStatus !== 'ALL' && booking.status !== filterStatus) return false;
-          if (filterResource && booking.resourceName && !booking.resourceName.toLowerCase().includes(filterResource.toLowerCase())) return false;
-          return true;
-        });
-
         if (filteredBookings.length === 0) {
           return (
             <div className="empty-state">
