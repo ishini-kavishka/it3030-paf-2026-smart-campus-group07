@@ -26,6 +26,23 @@ api.interceptors.request.use((config) => {
     return Promise.reject(error);
 });
 
+// Auto-logout on 401 (expired/invalid token) or 403 (forbidden)
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        const status = error.response?.status;
+        if (status === 401 || status === 403) {
+            // Clear the stored session
+            localStorage.removeItem('user');
+            // Redirect to login — works outside React components
+            if (window.location.pathname !== '/login') {
+                window.location.href = '/login';
+            }
+        }
+        return Promise.reject(error);
+    }
+);
+
 export const resourceService = {
   // Get all resources with optional filters
   getAllResources: async (filters = {}) => {
