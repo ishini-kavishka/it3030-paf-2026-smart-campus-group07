@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { User, Lock, Trash2, LogOut, Save, LayoutDashboard, Upload } from 'lucide-react';
+import { User, Lock, Trash2, LogOut, Save, LayoutDashboard, Upload, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const SettingsPage = () => {
@@ -31,6 +31,10 @@ const SettingsPage = () => {
 
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [showCurrentPw, setShowCurrentPw] = useState(false);
+    const [showNewPw, setShowNewPw] = useState(false);
+    const [showConfirmPw, setShowConfirmPw] = useState(false);
     const [passMsg, setPassMsg] = useState({ type: '', text: '' });
     const [passLoading, setPassLoading] = useState(false);
 
@@ -62,15 +66,26 @@ const SettingsPage = () => {
 
     const handleChangePassword = async (e) => {
         e.preventDefault();
-        setPassLoading(true);
         setPassMsg({ type: '', text: '' });
+
+        if (newPassword.length < 6) {
+            setPassMsg({ type: 'error', text: 'New password must be at least 6 characters.' });
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            setPassMsg({ type: 'error', text: 'New passwords do not match.' });
+            return;
+        }
+
+        setPassLoading(true);
         try {
             await changePassword(currentPassword, newPassword);
-            setPassMsg({ type: 'success', text: 'Password changed successfully!' });
+            setPassMsg({ type: 'success', text: '✅ Password updated successfully! A notification has been sent to your account.' });
             setCurrentPassword('');
             setNewPassword('');
-        } catch (error) {
-            setPassMsg({ type: 'error', text: 'Failed to change password. Check your current password.' });
+            setConfirmPassword('');
+        } catch {
+            setPassMsg({ type: 'error', text: 'Failed to update password. Please check your current password and try again.' });
         } finally {
             setPassLoading(false);
         }
@@ -225,34 +240,90 @@ const SettingsPage = () => {
                         </div>
                     )}
                     <form onSubmit={handleChangePassword} className="space-y-4">
+                        {/* Current password */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
-                            <input 
-                                type="password" 
-                                required
-                                value={currentPassword}
-                                onChange={(e) => setCurrentPassword(e.target.value)}
-                                className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:outline-none focus:ring-[#534AB7] focus:border-[#534AB7] bg-gray-50 focus:bg-white transition-colors"
-                            />
+                            <div className="relative">
+                                <input
+                                    type={showCurrentPw ? 'text' : 'password'}
+                                    required
+                                    value={currentPassword}
+                                    onChange={e => setCurrentPassword(e.target.value)}
+                                    className="w-full rounded-xl border border-gray-300 pl-4 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-[#534AB7] focus:border-[#534AB7] bg-gray-50 focus:bg-white transition-colors"
+                                    placeholder="Enter current password"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowCurrentPw(!showCurrentPw)}
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                                >
+                                    {showCurrentPw ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
                         </div>
+
+                        {/* New password */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
-                            <input 
-                                type="password" 
-                                required
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                                className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:outline-none focus:ring-[#534AB7] focus:border-[#534AB7] bg-gray-50 focus:bg-white transition-colors"
-                                minLength={6}
-                            />
+                            <div className="relative">
+                                <input
+                                    type={showNewPw ? 'text' : 'password'}
+                                    required
+                                    minLength={6}
+                                    value={newPassword}
+                                    onChange={e => setNewPassword(e.target.value)}
+                                    className="w-full rounded-xl border border-gray-300 pl-4 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-[#534AB7] focus:border-[#534AB7] bg-gray-50 focus:bg-white transition-colors"
+                                    placeholder="Minimum 6 characters"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowNewPw(!showNewPw)}
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                                >
+                                    {showNewPw ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
                         </div>
+
+                        {/* Confirm new password */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+                            <div className="relative">
+                                <input
+                                    type={showConfirmPw ? 'text' : 'password'}
+                                    required
+                                    value={confirmPassword}
+                                    onChange={e => setConfirmPassword(e.target.value)}
+                                    className={`w-full rounded-xl border pl-4 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-[#534AB7] bg-gray-50 focus:bg-white transition-colors ${
+                                        confirmPassword && newPassword !== confirmPassword
+                                            ? 'border-red-400 focus:border-red-400'
+                                            : 'border-gray-300 focus:border-[#534AB7]'
+                                    }`}
+                                    placeholder="Re-enter your new password"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowConfirmPw(!showConfirmPw)}
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                                >
+                                    {showConfirmPw ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
+                            {confirmPassword && newPassword !== confirmPassword && (
+                                <p className="text-xs text-red-500 mt-1 ml-1">Passwords do not match</p>
+                            )}
+                            {confirmPassword && newPassword === confirmPassword && confirmPassword.length > 0 && (
+                                <p className="text-xs text-emerald-600 mt-1 ml-1">✓ Passwords match</p>
+                            )}
+                        </div>
+
                         <div className="flex justify-end pt-2">
-                            <button 
-                                type="submit" 
+                            <button
+                                type="submit"
                                 disabled={passLoading}
                                 className="flex items-center gap-2 bg-[#534AB7] text-white px-5 py-2 rounded-xl font-medium tracking-wide hover:bg-[#3C3489] transition-colors disabled:opacity-70"
                             >
-                                <Lock size={18} /> {passLoading ? 'Updating...' : 'Update Password'}
+                                <Lock size={18} /> {passLoading ? 'Updating…' : 'Update Password'}
                             </button>
                         </div>
                     </form>

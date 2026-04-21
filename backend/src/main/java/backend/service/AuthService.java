@@ -250,6 +250,36 @@ public class AuthService {
         notificationService.createNotification(username, "Your password was recently modified.");
     }
 
+    public AuthResponse resetPassword(String email, String newPassword) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("No account found with that email address."));
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        // Notify the user
+        notificationService.createNotification(user.getUsername(),
+                "🔐 Your password was successfully reset. If you did not make this change, please contact support immediately.");
+
+        // Auto-login: return a valid JWT so the frontend can go straight to dashboard
+        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
+        String jwt = jwtUtil.generateToken(userDetails);
+
+        return new AuthResponse(
+                jwt,
+                user.getUsername(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getRole(),
+                user.getPhoneNumber(),
+                user.getAddress(),
+                user.getProfileImage(),
+                user.getDob(),
+                user.getCreatedAt()
+        );
+    }
+
     public void deleteProfile(@NonNull String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));

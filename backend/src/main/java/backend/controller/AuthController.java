@@ -96,6 +96,21 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> body) {
+        String email = body.get("email");
+        String newPassword = body.get("newPassword");
+        if (email == null || newPassword == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Email and new password are required."));
+        }
+        try {
+            AuthResponse response = authService.resetPassword(email.trim(), newPassword);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
+
     @DeleteMapping("/profile")
     public ResponseEntity<?> deleteProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

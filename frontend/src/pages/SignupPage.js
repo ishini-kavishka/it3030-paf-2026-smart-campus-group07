@@ -33,6 +33,7 @@ const SignupPage = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -378,9 +379,31 @@ const SignupPage = () => {
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
                             <div className="relative">
-                                <input type={showPassword ? "text" : "password"} required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
-                                    className="w-full rounded-xl border border-gray-300 px-4 py-2.5 focus:ring-[#534AB7] focus:border-[#534AB7] bg-gray-50 focus:bg-white transition-colors" />
+                                <input
+                                    type={showConfirmPassword ? "text" : "password"}
+                                    required
+                                    value={confirmPassword}
+                                    onChange={e => setConfirmPassword(e.target.value)}
+                                    className={`w-full rounded-xl border px-4 pr-10 py-2.5 focus:ring-[#534AB7] bg-gray-50 focus:bg-white transition-colors ${
+                                        confirmPassword && password !== confirmPassword
+                                            ? 'border-red-400 focus:border-red-400'
+                                            : 'border-gray-300 focus:border-[#534AB7]'
+                                    }`}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                                >
+                                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
                             </div>
+                            {confirmPassword && password !== confirmPassword && (
+                                <p className="text-xs text-red-500 mt-1 ml-1">Passwords do not match</p>
+                            )}
+                            {confirmPassword && password === confirmPassword && confirmPassword.length > 0 && (
+                                <p className="text-xs text-emerald-600 mt-1 ml-1">✓ Passwords match</p>
+                            )}
                         </div>
                         
                         <div className="flex gap-3 mt-6">
