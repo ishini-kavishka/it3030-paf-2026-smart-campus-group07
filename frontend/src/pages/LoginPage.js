@@ -24,7 +24,7 @@ const LoginPage = () => {
     const [showFpConfirm, setShowFpConfirm] = useState(false);
     const [fpSuccess, setFpSuccess] = useState(false);
 
-    const { login, googleLogin, setUser } = useAuth();
+    const { login, googleLogin } = useAuth();
     const navigate = useNavigate();
 
     // ── Google ────────────────────────────────────────────────────────────────

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authApi from '../api/authApi';
 import { useAuth } from '../context/AuthContext';
-import { Database, User, Mail, MapPin, Lock, Upload, Check, Eye, EyeOff } from 'lucide-react';
+import { User, Mail, MapPin, Lock, Upload, Check, Eye, EyeOff } from 'lucide-react';
 
 const SignupPage = () => {
     const navigate = useNavigate();
@@ -23,7 +23,7 @@ const SignupPage = () => {
     
     // Step 2: Email verification
     const [otp, setOtp] = useState('');
-    const [otpSent, setOtpSent] = useState(false);
+    const [otpSent, setOtpSent] = useState(false); // eslint-disable-line no-unused-vars
     
     // Step 3: Address
     const [address, setAddress] = useState('');
