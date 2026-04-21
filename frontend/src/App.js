@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import './App.css';
@@ -7,7 +7,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import AdminDashboard from './pages/AdminDashboard';
 import CataloguePage from './pages/CataloguePage';
-import DashboardOverview from './pages/DashboardOverview';
+// import DashboardOverview from './pages/DashboardOverview';
 import MyBookingsPage from './pages/MyBookingsPage';
 import AdminBookingsPage from './pages/AdminBookingsPage';
 import HomePage from './pages/HomePage';
