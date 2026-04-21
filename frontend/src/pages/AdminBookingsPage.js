@@ -31,8 +31,9 @@ const AdminBookingsPage = () => {
 
   const handleStatusChange = async (id, status) => {
     let reason = '';
-    if (status === 'REJECTED') {
-      reason = window.prompt("Enter reason for rejection:");
+    if (status === 'REJECTED' || status === 'CANCELLED') {
+      const action = status === 'REJECTED' ? 'rejection' : 'cancellation';
+      reason = window.prompt(`Enter reason for ${action}:`);
       if (reason === null) return; // cancelled prompt
     }
 
@@ -329,6 +330,12 @@ const AdminBookingsPage = () => {
                               </button>
                               <button onClick={() => handleStatusChange(booking.id, 'REJECTED')} className="btn" style={{ padding: '0.5rem 1rem', background: '#fef2f2', color: '#dc2626', border: '1px solid #f87171', fontSize: '0.8rem', borderRadius: '10px', fontWeight: 600, boxShadow: '0 2px 4px rgba(239,68,68,0.1)' }}>
                                 <XSquare size={16} /> Reject
+                              </button>
+                            </div>
+                          ) : booking.status === 'APPROVED' ? (
+                            <div style={{ display: 'inline-flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                              <button onClick={() => handleStatusChange(booking.id, 'CANCELLED')} className="btn" style={{ padding: '0.5rem 1rem', background: '#fff1f2', color: '#e11d48', border: '1px solid #ffe4e6', fontSize: '0.8rem', borderRadius: '10px', fontWeight: 600, boxShadow: '0 2px 4px rgba(225,29,72,0.1)' }}>
+                                <XSquare size={16} /> Cancel
                               </button>
                             </div>
                           ) : (

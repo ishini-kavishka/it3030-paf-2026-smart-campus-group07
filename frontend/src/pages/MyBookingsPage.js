@@ -77,16 +77,16 @@ const MyBookingsPage = () => {
   return (
     <div className="catalogue-page animate-in">
       {/* Premium Hero Area */}
-      <div className="catalogue-hero" style={{ 
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', 
+      <div className="catalogue-hero" style={{
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
         borderColor: 'rgba(83, 74, 183, 0.3)',
         boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
       }}>
         <div className="hero-content">
-          <div className="hero-badge" style={{ 
-            color: '#a5b4fc', 
-            background: 'rgba(83, 74, 183, 0.2)', 
-            borderColor: 'rgba(165, 180, 252, 0.3)' 
+          <div className="hero-badge" style={{
+            color: '#a5b4fc',
+            background: 'rgba(83, 74, 183, 0.2)',
+            borderColor: 'rgba(165, 180, 252, 0.3)'
           }}>
             <CalendarClock size={14} /> My Bookings
           </div>
@@ -96,11 +96,11 @@ const MyBookingsPage = () => {
           <p className="hero-sub" style={{ color: '#94a3b8', fontSize: '1.05rem', maxWidth: '600px' }}>
             Keep track of your upcoming schedules. View details, modify configurations, or cancel reservations directly from your dashboard.
           </p>
-          <button 
-            className="btn btn-primary" 
-            onClick={() => navigate('/catalogue')} 
-            style={{ 
-              background: '#534AB7', 
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate('/catalogue')}
+            style={{
+              background: '#534AB7',
               border: 'none',
               padding: '0.85rem 1.75rem',
               fontSize: '1rem',
@@ -111,7 +111,7 @@ const MyBookingsPage = () => {
             Book a Resource
           </button>
         </div>
-        
+
         {/* Decorative elements for premium feel */}
         <div style={{
           position: 'absolute', right: '-5%', top: '-20%', width: '300px', height: '300px',
@@ -125,15 +125,15 @@ const MyBookingsPage = () => {
           <Filter size={16} />
           <span className="text-sm font-medium">Filters:</span>
         </div>
-        
-        <input 
-          type="date" 
+
+        <input
+          type="date"
           value={filterDate}
           onChange={(e) => setFilterDate(e.target.value)}
           className="filter-select"
         />
-        
-        <select 
+
+        <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
           className="filter-select"
@@ -144,11 +144,11 @@ const MyBookingsPage = () => {
           <option value="REJECTED">Rejected</option>
           <option value="CANCELLED">Cancelled</option>
         </select>
-        
+
         <div className="search-box">
           <Search size={16} />
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Search by Resource..."
             value={filterResource}
             onChange={(e) => setFilterResource(e.target.value)}
@@ -156,7 +156,7 @@ const MyBookingsPage = () => {
         </div>
 
         {(filterDate || filterStatus !== 'ALL' || filterResource) && (
-          <button 
+          <button
             onClick={() => { setFilterDate(''); setFilterStatus('ALL'); setFilterResource(''); }}
             className="btn btn-ghost"
             style={{ color: '#e11d48', borderColor: '#ffe4e6', background: '#fff1f2' }}
@@ -186,27 +186,27 @@ const MyBookingsPage = () => {
         <div className="catalogue-grid">
           {filteredBookings.map((booking) => {
             const statusConfig = getStatusConfig(booking.status);
-            
+
             return (
-              <div 
-                key={booking.id} 
-                className="catalogue-card" 
-                style={{ 
-                  display: 'flex', 
+              <div
+                key={booking.id}
+                className="catalogue-card"
+                style={{
+                  display: 'flex',
                   flexDirection: 'column',
                   padding: '1.75rem',
                   boxShadow: '0 4px 20px rgba(0,0,0,0.03)'
                 }}
               >
                 {/* Accent Top Bar */}
-                <div style={{ 
-                  position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', 
-                  background: statusConfig.color 
+                <div style={{
+                  position: 'absolute', top: 0, left: 0, width: '100%', height: '4px',
+                  background: statusConfig.color
                 }} />
 
                 {/* Status & Date */}
                 <div className="flex justify-between items-center mb-4">
-                  <div style={{ 
+                  <div style={{
                     display: 'flex', alignItems: 'center', gap: '0.4rem',
                     background: statusConfig.bg, color: statusConfig.color,
                     padding: '0.35rem 0.85rem', borderRadius: '50px',
@@ -229,8 +229,8 @@ const MyBookingsPage = () => {
                 </p>
 
                 {/* Metadatas */}
-                <div style={{ 
-                  display: 'flex', flexDirection: 'column', gap: '0.75rem', 
+                <div style={{
+                  display: 'flex', flexDirection: 'column', gap: '0.75rem',
                   background: '#f8fafc', padding: '1rem', borderRadius: '12px',
                   marginBottom: '1.5rem'
                 }}>
@@ -247,7 +247,7 @@ const MyBookingsPage = () => {
                       <Users size={16} style={{ color: '#94a3b8' }} /> Expected
                     </span>
                     <span style={{ color: '#0f172a', fontWeight: '600' }}>
-                      {booking.expectedAttendees} Attendees
+                      {booking.expectedAttendees} {booking.expectedAttendees === 1 ? 'Attendee' : 'Attendees'}
                     </span>
                   </div>
                 </div>
@@ -267,27 +267,27 @@ const MyBookingsPage = () => {
                 {/* Action Buttons */}
                 <div className="flex gap-3 mt-auto pt-4" style={{ borderTop: '1px solid #f1f5f9' }}>
                   {booking.status === 'PENDING' && (
-                    <button 
-                      onClick={() => handleEdit(booking)} 
-                      className="btn btn-ghost flex-1 py-2 text-sm justify-center" 
+                    <button
+                      onClick={() => handleEdit(booking)}
+                      className="btn btn-ghost flex-1 py-2 text-sm justify-center"
                       style={{ background: '#f8fafc', borderColor: '#e2e8f0', color: '#334155' }}
                     >
                       <Edit size={16} /> Edit
                     </button>
                   )}
                   {['PENDING', 'APPROVED'].includes(booking.status) && (
-                    <button 
-                      onClick={() => handleCancel(booking.id)} 
-                      className="btn btn-ghost flex-1 py-2 text-sm justify-center" 
+                    <button
+                      onClick={() => handleCancel(booking.id)}
+                      className="btn btn-ghost flex-1 py-2 text-sm justify-center"
                       style={{ background: '#fff1f2', borderColor: '#ffe4e6', color: '#e11d48' }}
                     >
                       <X size={16} /> Cancel
                     </button>
                   )}
                   {['CANCELLED', 'REJECTED'].includes(booking.status) && (
-                    <button 
-                      onClick={() => handleDelete(booking.id)} 
-                      className="btn btn-ghost flex-1 py-2 text-sm justify-center" 
+                    <button
+                      onClick={() => handleDelete(booking.id)}
+                      className="btn btn-ghost flex-1 py-2 text-sm justify-center"
                       style={{ background: '#fff1f2', borderColor: '#ffe4e6', color: '#e11d48' }}
                     >
                       <Trash2 size={16} /> Delete
