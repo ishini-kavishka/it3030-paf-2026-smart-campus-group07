@@ -45,6 +45,16 @@ const AdminBookingsPage = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to permanently delete this booking?")) return;
+    try {
+      await bookingService.deleteBooking(id);
+      fetchBookings();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const filteredBookings = bookings.filter(booking => {
     if (filterDate && booking.date !== filterDate) return false;
     if (filterStatus !== 'ALL' && booking.status !== filterStatus) return false;
@@ -336,6 +346,12 @@ const AdminBookingsPage = () => {
                             <div style={{ display: 'inline-flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                               <button onClick={() => handleStatusChange(booking.id, 'CANCELLED')} className="btn" style={{ padding: '0.5rem 1rem', background: '#fff1f2', color: '#e11d48', border: '1px solid #ffe4e6', fontSize: '0.8rem', borderRadius: '10px', fontWeight: 600, boxShadow: '0 2px 4px rgba(225,29,72,0.1)' }}>
                                 <XSquare size={16} /> Cancel
+                              </button>
+                            </div>
+                          ) : booking.status === 'CANCELLED' ? (
+                            <div style={{ display: 'inline-flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                              <button onClick={() => handleDelete(booking.id)} className="btn" style={{ padding: '0.5rem 1rem', background: '#f8fafc', color: '#64748b', border: '1px solid #cbd5e1', fontSize: '0.8rem', borderRadius: '10px', fontWeight: 600 }}>
+                                <XSquare size={16} /> Delete
                               </button>
                             </div>
                           ) : (
