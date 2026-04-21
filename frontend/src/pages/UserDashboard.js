@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Calendar, Settings, Bell, User, ChevronRight, ShieldCheck, CalendarClock } from 'lucide-react';
+import { Calendar, Settings, Bell, User, ChevronRight, ShieldCheck, CalendarClock, Wrench } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const UserDashboard = () => {
@@ -12,6 +12,7 @@ const UserDashboard = () => {
     const quickLinks = [
         { title: 'My Bookings', icon: <Calendar className="w-8 h-8" />, desc: 'View and manage your current reservations', color: 'bg-blue-50 text-blue-600', path: '/my-bookings' },
         { title: 'Settings', icon: <Settings className="w-8 h-8" />, desc: 'Manage your account and preferences', color: 'bg-purple-50 text-purple-600', path: '/settings' },
+        { title: 'My Incidents', icon: <Wrench className="w-8 h-8" />, desc: 'Report and track campus maintenance issues', color: 'bg-indigo-50 text-indigo-600', path: '/maintenance' },
         { title: 'Notifications', icon: <Bell className="w-8 h-8" />, desc: 'Check your latest alerts and updates', color: 'bg-amber-50 text-amber-600', path: '/notifications' },
         { title: 'View Profile', icon: <User className="w-8 h-8" />, desc: 'See your public campus profile', color: 'bg-emerald-50 text-emerald-600', path: '/profile' }
     ];

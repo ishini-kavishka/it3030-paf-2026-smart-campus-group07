@@ -19,6 +19,7 @@ import {
   Lock,
   Activity
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 /* ── Animated counter hook ── */
 function useCounter(target, duration = 1800) {
@@ -49,8 +50,13 @@ const StatCard = ({ value, label, icon: Icon, color }) => {
   );
 };
 
-const HomePage = ({ onNavigate }) => {
+const HomePage = () => {
   const [activeModule, setActiveModule] = useState(null);
+  const navigate = useNavigate();
+  
+  const onNavigate = (path) => {
+     navigate(`/${path}`);
+  };
 
   const modules = [
     {
