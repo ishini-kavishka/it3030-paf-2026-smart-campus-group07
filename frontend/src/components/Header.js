@@ -3,7 +3,6 @@ import {
   Bell,
   User,
   Calendar,
-  Database,
   Menu,
   X,
   ChevronRight,
@@ -56,10 +55,10 @@ const Header = () => {
   const mobileLinks = [
     { label: 'Home', tab: 'home', icon: <LayoutDashboard size={18} /> },
     { label: 'Catalogue', tab: 'catalogue', icon: <BookOpen size={18} /> },
+    ...(user ? [{ label: 'Dashboard', tab: 'dashboard', icon: <LayoutDashboard size={18} /> }] : []),
     { label: 'Booking', tab: 'booking', icon: <Calendar size={18} /> },
     ...(user ? [{ label: 'My Bookings', tab: 'my-bookings', icon: <Calendar size={18} /> }] : []),
     ...(user?.role === 'ROLE_ADMIN' ? [
-      { label: 'Dashboard', tab: 'dashboard', icon: <LayoutDashboard size={18} /> },
       { label: 'Admin Hub', tab: 'admin', icon: <Settings size={18} /> },
       { label: 'Maintenance', tab: 'maintenance', icon: <Wrench size={18} /> },
     ] : []),
@@ -97,11 +96,22 @@ const Header = () => {
           <div className="header-center hide-mobile">
             {isHome && (
               <nav className="header-nav">
-                <button onClick={() => nav('catalogue')}>Catalogue</button>
+                {user && (
+                  <button className={currentTab === 'dashboard' ? 'active-nav' : ''} onClick={() => nav('dashboard')}>
+                    Dashboard
+                  </button>
+                )}
+                <button className={currentTab === 'catalogue' ? 'active-nav' : ''} onClick={() => nav('catalogue')}>
+                  Catalogue
+                </button>
                 <button className={currentTab === 'booking' ? 'active-nav' : ''} onClick={() => nav('booking')}>
                   Booking
                 </button>
-                {user?.role === 'ROLE_ADMIN' && <button onClick={() => nav('admin')}>Admin Hub</button>}
+                {user?.role === 'ROLE_ADMIN' && (
+                  <button className={currentTab === 'admin' ? 'active-nav' : ''} onClick={() => nav('admin')}>
+                    Admin Hub
+                  </button>
+                )}
               </nav>
             )}
           </div>

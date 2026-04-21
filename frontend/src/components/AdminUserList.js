@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import {
     ShieldAlert, CheckCircle, XCircle, RefreshCw, MessageSquare,
@@ -17,7 +17,7 @@ const AdminUserList = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [filterStatus, setFilterStatus] = useState('ALL');
 
-    const fetchUsers = async () => {
+    const fetchUsers = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
@@ -28,9 +28,9 @@ const AdminUserList = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [token, user.username]);
 
-    useEffect(() => { fetchUsers(); }, [user, token]);
+    useEffect(() => { fetchUsers(); }, [fetchUsers]);
 
     const stats = useMemo(() => {
         const total = users.length;

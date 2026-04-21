@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Database, Lock, Mail, Eye, EyeOff } from 'lucide-react';
+import { Lock, Mail, Eye, EyeOff } from 'lucide-react';
 import { GoogleLogin } from '@react-oauth/google';
 
 const LoginPage = () => {
@@ -18,7 +18,7 @@ const LoginPage = () => {
         setLoading(true);
         setError('');
         try {
-            const userData = await googleLogin(credentialResponse.credential);
+            await googleLogin(credentialResponse.credential);
             navigate('/dashboard');
         } catch (err) {
             setError('Google Sign-In failed. Please try again.');
@@ -42,7 +42,7 @@ const LoginPage = () => {
 
         setLoading(true);
         try {
-            const userData = await login(username, password);
+            await login(username, password);
             navigate('/dashboard');
         } catch (err) {
             setError('Invalid username or password');
@@ -136,7 +136,7 @@ const LoginPage = () => {
                         </div>
 
                         <div className="text-sm">
-                            <a href="#" className="font-medium text-[#534AB7] hover:text-[#3C3489] transition-colors">
+                            <a href="#!" className="font-medium text-[#534AB7] hover:text-[#3C3489] transition-colors">
                                 Forgot your password?
                             </a>
                         </div>
