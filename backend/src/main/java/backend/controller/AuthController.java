@@ -23,8 +23,16 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        try {
+            return ResponseEntity.ok(authService.login(request));
+        } catch (Exception e) {
+            String msg = e.getMessage() != null ? e.getMessage() : "";
+            if ("ACCOUNT_SUSPENDED".equals(msg)) {
+                return ResponseEntity.status(403).body(Map.of("message", "Your account has been suspended. Please contact support."));
+            }
+            return ResponseEntity.status(401).body(Map.of("message", "Invalid username or password."));
+        }
     }
 
     @PostMapping("/google")

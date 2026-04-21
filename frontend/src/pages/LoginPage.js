@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Lock, Mail, Eye, EyeOff, ArrowLeft, CheckCircle } from 'lucide-react';
@@ -13,8 +13,18 @@ const LoginPage = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
+    // Pre-fill username from localStorage if Remember Me was previously checked
+    useEffect(() => {
+        const saved = localStorage.getItem('sc_remembered_username');
+        if (saved) {
+            setUsername(saved);
+            setRememberMe(true);
+        }
+    }, []);
 
     // Forgot password state
     const [fpEmail, setFpEmail] = useState('');
@@ -49,9 +59,20 @@ const LoginPage = () => {
         setLoading(true);
         try {
             await login(username, password);
+            // Save or clear the remembered username
+            if (rememberMe) {
+                localStorage.setItem('sc_remembered_username', username);
+            } else {
+                localStorage.removeItem('sc_remembered_username');
+            }
             navigate('/dashboard');
-        } catch {
-            setError('Invalid username or password');
+        } catch (err) {
+            const msg = err.response?.data?.message || '';
+            if (err.response?.status === 403 || msg.toLowerCase().includes('suspended')) {
+                setError('SUSPENDED');
+            } else {
+                setError('Invalid username or password');
+            }
         } finally {
             setLoading(false);
         }
@@ -242,11 +263,19 @@ const LoginPage = () => {
                 </div>
 
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-                    {error && (
+                    {error === 'SUSPENDED' ? (
+                        <div className="bg-amber-50 border border-amber-300 rounded-xl p-4 flex gap-3 items-start">
+                            <span className="text-2xl leading-none mt-0.5">🔒</span>
+                            <div>
+                                <p className="text-amber-900 font-bold text-sm">Account Suspended</p>
+                                <p className="text-amber-800 text-sm mt-0.5">Your account has been suspended by the administrator. Please contact support for assistance.</p>
+                            </div>
+                        </div>
+                    ) : error ? (
                         <div className="bg-red-50 text-red-700 p-3 rounded-lg text-sm text-center font-medium border border-red-200">
                             {error}
                         </div>
-                    )}
+                    ) : null}
                     <div className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Username or Email address</label>
@@ -257,6 +286,7 @@ const LoginPage = () => {
                                 <input
                                     type="text"
                                     required
+                                    autoComplete="username"
                                     className={inputCls}
                                     placeholder="Enter your username or email"
                                     value={username}
@@ -274,6 +304,7 @@ const LoginPage = () => {
                                 <input
                                     type={showPassword ? 'text' : 'password'}
                                     required
+                                    autoComplete="current-password"
                                     className={inputCls}
                                     placeholder="Enter your password"
                                     value={password}
@@ -296,9 +327,16 @@ const LoginPage = () => {
                                 id="remember-me"
                                 name="remember-me"
                                 type="checkbox"
-                                className="h-4 w-4 text-[#534AB7] focus:ring-[#534AB7] border-gray-300 rounded"
+                                checked={rememberMe}
+                                onChange={e => {
+                                    setRememberMe(e.target.checked);
+                                    if (!e.target.checked) {
+                                        localStorage.removeItem('sc_remembered_username');
+                                    }
+                                }}
+                                className="h-4 w-4 text-[#534AB7] focus:ring-[#534AB7] border-gray-300 rounded cursor-pointer"
                             />
-                            <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">Remember me</label>
+                            <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900 cursor-pointer select-none">Remember me</label>
                         </div>
 
                         <button
