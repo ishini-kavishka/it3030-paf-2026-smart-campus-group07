@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ShieldCheck, CheckSquare, XSquare, Search, Filter, Download } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { ShieldCheck, CheckSquare, XSquare, Search, Filter, Download, CalendarClock, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { bookingService } from '../services/api';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -31,9 +31,8 @@ const AdminBookingsPage = () => {
 
   const handleStatusChange = async (id, status) => {
     let reason = '';
-    if (status === 'REJECTED' || status === 'CANCELLED') {
-      const action = status === 'REJECTED' ? 'rejection' : 'cancellation';
-      reason = window.prompt(`Enter reason for ${action}:`);
+    if (status === 'REJECTED') {
+      reason = window.prompt(`Enter reason for rejection:`);
       if (reason === null) return; // cancelled prompt
     }
 
@@ -61,6 +60,21 @@ const AdminBookingsPage = () => {
     if (filterResource && booking.resourceName && !booking.resourceName.toLowerCase().includes(filterResource.toLowerCase())) return false;
     return true;
   });
+
+  const stats = useMemo(() => {
+    const total = bookings.length;
+    const pending = bookings.filter(b => b.status === 'PENDING').length;
+    const approved = bookings.filter(b => b.status === 'APPROVED').length;
+    const rejected = bookings.filter(b => b.status === 'REJECTED' || b.status === 'CANCELLED').length;
+    return { total, pending, approved, rejected };
+  }, [bookings]);
+
+  const statCards = [
+    { label: 'Total Bookings', value: stats.total, icon: <CalendarClock size={20} />, color: '#6366f1', bg: '#eef2ff' },
+    { label: 'Pending', value: stats.pending, icon: <Clock size={20} />, color: '#f59e0b', bg: '#fef3c7' },
+    { label: 'Approved', value: stats.approved, icon: <CheckCircle size={20} />, color: '#10b981', bg: '#d1fae5' },
+    { label: 'Rejected / Canceled', value: stats.rejected, icon: <XCircle size={20} />, color: '#f43f5e', bg: '#ffe4e6' },
+  ];
 
   const generatePDF = () => {
     const doc = new jsPDF();
@@ -167,17 +181,47 @@ const AdminBookingsPage = () => {
 
   return (
     <div className="catalogue-page animate-in">
-      <div className="catalogue-hero" style={{ background: 'linear-gradient(135deg, rgba(83,74,183,1) 0%, rgba(38,33,92,1) 100%)', border: 'none', borderRadius: '24px', position: 'relative', overflow: 'hidden', padding: '3.5rem 3rem' }}>
-        <div style={{ position: 'absolute', top: '-20%', right: '-5%', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)', borderRadius: '50%' }} />
-        <div className="hero-content" style={{ position: 'relative', zIndex: 1 }}>
-          <div className="hero-badge" style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)', padding: '0.4rem 1rem' }}>
-            <ShieldCheck size={14} /> Admin Tools
+      {/* ── Page Header ─────────────────────────────────────────── */}
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+            <ShieldCheck size={18} style={{ color: '#6366f1' }} />
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#6366f1' }}>
+              Booking Approvals
+            </span>
           </div>
-          <h1 className="hero-title" style={{ color: '#fff', fontSize: '2.75rem', marginBottom: '0.75rem', fontWeight: 800 }}>Booking Approvals</h1>
-          <p className="hero-sub" style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1.05rem', maxWidth: '600px' }}>
-            Review, approve, or reject booking requests across the campus seamlessly.
-          </p>
+          <h1 style={{ color: '#111827', fontWeight: 800, fontSize: '2.25rem', letterSpacing: '-0.02em', margin: 0 }}>
+            Admin Bookings
+          </h1>
+          <p style={{ color: '#6b7280', marginTop: '0.25rem', fontSize: '1rem' }}>Review, approve, or reject booking requests across the campus</p>
         </div>
+      </header>
+
+      {/* ── Stat Cards ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
+        {statCards.map(card => (
+          <div key={card.label} style={{
+            background: '#fff', borderRadius: '16px', border: '1px solid #e5e7eb',
+            padding: '1.25rem 1.5rem', display: 'flex', alignItems: 'center',
+            gap: '1rem', boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
+          }}>
+            <div style={{
+              width: 44, height: 44, borderRadius: '12px',
+              background: card.bg, color: card.color,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+            }}>
+              {card.icon}
+            </div>
+            <div>
+              <div style={{ fontSize: '1.65rem', fontWeight: 800, color: '#111827', lineHeight: 1 }}>
+                {card.value}
+              </div>
+              <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6b7280', marginTop: '0.3rem' }}>
+                {card.label}
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className="toolbar" style={{ margin: '2rem 0', background: 'rgba(255,255,255,0.85)', padding: '1.25rem', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.5)', backdropFilter: 'blur(12px)', boxShadow: '0 8px 30px rgba(0,0,0,0.03)' }}>
