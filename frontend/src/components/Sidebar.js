@@ -9,9 +9,7 @@ import {
   Settings,
   LayoutDashboard,
   Home,
-  LogOut,
-  BookOpen,
-  Calendar
+  LogOut
 } from 'lucide-react';
 
 const Sidebar = ({ currentTab, setTab, userRole }) => {

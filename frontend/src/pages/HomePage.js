@@ -106,6 +106,18 @@ const HomePage = () => {
       memberFull: 'Member 4',
       features: ['Real-time Alerts', 'Notification Panel', 'Status History Log'],
       action: 'Open Alerts'
+    },
+    {
+      id: 'calendar-demo',
+      title: 'Availability View',
+      desc: 'Visualize facility uptime and booking density with our premium, real-time interactive calendar interface.',
+      icon: Activity,
+      color: '#f43f5e',
+      gradient: 'linear-gradient(135deg, #f43f5e, #fb7185)',
+      member: 'M1',
+      memberFull: 'Availability Sync',
+      features: ['Interactive Monthly View', 'Visual Conflict Highlighting', 'One-Tap Slot Selection'],
+      action: 'Check Availability'
     }
   ];
 
@@ -158,6 +170,10 @@ const HomePage = () => {
                 <BookOpen size={18} />
                 Explore Catalogue
                 <ArrowRight size={16} />
+              </button>
+              <button className="hp-btn-ghost" onClick={() => onNavigate('calendar-demo')}>
+                <Calendar size={18} />
+                Live Availability
               </button>
               <button className="hp-btn-ghost" onClick={() => onNavigate('dashboard')}>
                 View Dashboard

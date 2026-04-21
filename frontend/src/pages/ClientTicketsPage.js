@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { incidentService } from '../services/api';
 import { Wrench, Plus, Search, Filter, RefreshCw, Layers, Clock, CheckCircle2, AlertCircle, X, Paperclip, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -49,7 +49,7 @@ const ClientTicketsPage = () => {
     title: '', category: 'Electrical', description: '', priority: 'MEDIUM', contact: '', attachments: [] 
   });
 
-  const fetchTickets = async () => {
+  const fetchTickets = useCallback(async () => {
     try {
       setLoading(true);
       const data = await incidentService.getMyTickets();
@@ -59,7 +59,7 @@ const ClientTicketsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files).slice(0, 3);
@@ -79,7 +79,7 @@ const ClientTicketsPage = () => {
     });
   };
 
-  useEffect(() => { fetchTickets(); }, []);
+  useEffect(() => { fetchTickets(); }, [fetchTickets]);
 
   const filteredTickets = useMemo(() => {
     return tickets.filter(t => {

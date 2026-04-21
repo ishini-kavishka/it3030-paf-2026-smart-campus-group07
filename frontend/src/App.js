@@ -23,15 +23,6 @@ import ClientTicketsPage from './pages/ClientTicketsPage';
 import CalendarDemo from './pages/CalendarDemo';
 import { useAuth } from './context/AuthContext';
 
-const ComingSoon = ({ title }) => (
-  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: '1rem' }}>
-    <div style={{ width: 64, height: 64, borderRadius: '1.5rem', background: 'rgba(99,102,241,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <span style={{ fontSize: '2rem' }}>🔧</span>
-    </div>
-    <h2 className="text-white font-bold" style={{ fontSize: '1.5rem' }}>{title}</h2>
-    <p className="text-muted text-sm">This module is being built by another team member.</p>
-  </div>
-);
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();

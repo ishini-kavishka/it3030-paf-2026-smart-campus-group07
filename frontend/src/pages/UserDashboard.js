@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Calendar, Settings, Bell, User, ChevronRight, ShieldCheck, CalendarClock, Wrench } from 'lucide-react
-import { Calendar, Settings, Bell, User, ChevronRight, ShieldCheck, CalendarClock, BarChart3, Clock, Box } from 'lucide-react';
+import { Calendar, Settings, Bell, User, ChevronRight, ShieldCheck, CalendarClock, Wrench, BarChart3, Clock, Box } from 'lucide-react';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 import { bookingService } from '../services/api';

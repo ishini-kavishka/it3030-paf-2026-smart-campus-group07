@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { incidentService } from '../services/api';
 import { Wrench, Plus, Search, Filter, RefreshCw, Layers, Clock, CheckCircle2, AlertCircle, X, Paperclip, MessageSquare, Briefcase } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -51,7 +51,7 @@ const MaintenancePage = () => {
   const [updateStatus, setUpdateStatus] = useState('');
   const [technicianName, setTechnicianName] = useState('');
 
-  const fetchTickets = async () => {
+  const fetchTickets = useCallback(async () => {
     try {
       setLoading(true);
       const data = await incidentService.getAllTickets();
@@ -61,9 +61,9 @@ const MaintenancePage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  useEffect(() => { fetchTickets(); }, []);
+  useEffect(() => { fetchTickets(); }, [fetchTickets]);
 
   const filteredTickets = useMemo(() => {
     return tickets.filter(t => {
