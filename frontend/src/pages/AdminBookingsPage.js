@@ -54,26 +54,26 @@ const AdminBookingsPage = () => {
 
   const generatePDF = () => {
     const doc = new jsPDF();
-    
+
     // Header Background
     doc.setFillColor(83, 74, 183);
     doc.rect(0, 0, doc.internal.pageSize.width, 40, 'F');
-    
+
     // Header Text
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(22);
     doc.setFont("helvetica", "bold");
     doc.text('SMART CAMPUS HUB', 14, 20);
-    
+
     doc.setFontSize(14);
     doc.setFont("helvetica", "normal");
     doc.text('Admin Bookings Report', 14, 30);
-    
+
     // Generation Details & Summary
     doc.setTextColor(100, 100, 100);
     doc.setFontSize(10);
     doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 50);
-    
+
     const totalBookings = filteredBookings.length;
     const pendingBookings = filteredBookings.filter(b => b.status === 'PENDING').length;
     doc.setTextColor(50, 50, 50);
@@ -100,13 +100,13 @@ const AdminBookingsPage = () => {
       body: tableRows,
       startY: 65,
       theme: 'striped',
-      styles: { 
+      styles: {
         fontSize: 8.5,
         font: 'helvetica',
         cellPadding: { top: 4, right: 3, bottom: 4, left: 3 },
       },
-      headStyles: { 
-        fillColor: [83, 74, 183], 
+      headStyles: {
+        fillColor: [83, 74, 183],
         textColor: 255,
         fontStyle: 'bold',
         halign: 'left'
@@ -129,30 +129,31 @@ const AdminBookingsPage = () => {
       },
       didParseCell: function (data) {
         if (data.section === 'body' && data.column.index === 6) {
-            const status = data.cell.text[0];
-            if (status === 'APPROVED') {
-              data.cell.styles.textColor = [16, 185, 129];
-            } else if (status === 'REJECTED' || status === 'CANCELLED') {
-              data.cell.styles.textColor = [239, 68, 68];
-            } else if (status === 'PENDING') {
-              data.cell.styles.textColor = [245, 158, 11];
-            }
+          const status = data.cell.text[0];
+          if (status === 'APPROVED') {
+            data.cell.styles.textColor = [16, 185, 129];
+          } else if (status === 'REJECTED' || status === 'CANCELLED') {
+            data.cell.styles.textColor = [239, 68, 68];
+          } else if (status === 'PENDING') {
+            data.cell.styles.textColor = [245, 158, 11];
+          }
         }
       }
     });
 
     // Add footer with page numbers
     const pageCount = doc.internal.getNumberOfPages();
-    for(let i = 1; i <= pageCount; i++) {
-        doc.setPage(i);
-        doc.setFontSize(8);
-        doc.setTextColor(150);
-        doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 10, {
-            align: 'center'
-        });
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(150);
+      doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 10, {
+        align: 'center'
+      });
     }
 
-    doc.save('Admin_Bookings_Report.pdf');  };
+    doc.save('Admin_Bookings_Report.pdf');
+  };
 
   return (
     <div className="catalogue-page animate-in">
