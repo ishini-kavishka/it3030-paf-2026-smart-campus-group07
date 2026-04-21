@@ -31,47 +31,47 @@ const ComingSoon = ({ title }) => (
 );
 
 const ProtectedRoute = ({ children }) => {
-    const { user, loading } = useAuth();
-    if (loading) return <div>Loading...</div>;
-    if (!user) return <Navigate to="/login" replace />;
-    return children;
+  const { user, loading } = useAuth();
+  if (loading) return <div>Loading...</div>;
+  if (!user) return <Navigate to="/login" replace />;
+  return children;
 };
 
 const AdminRoute = ({ children }) => {
-    const { user, loading } = useAuth();
-    if (loading) return <div>Loading...</div>;
-    if (!user) return <Navigate to="/login" replace />;
-    if (user.role !== 'ROLE_ADMIN') return <Navigate to="/dashboard" replace />;
-    return children;
+  const { user, loading } = useAuth();
+  if (loading) return <div>Loading...</div>;
+  if (!user) return <Navigate to="/login" replace />;
+  if (user.role !== 'ROLE_ADMIN') return <Navigate to="/dashboard" replace />;
+  return children;
 };
 
 const Layout = ({ children }) => {
-    const location = useLocation();
-    const { user } = useAuth();
-    const isHome = location.pathname === '/' || location.pathname === '/home';
-    const isLogin = location.pathname === '/login';
-    const isSignup = location.pathname === '/signup';
+  const location = useLocation();
+  const { user } = useAuth();
+  const isHome = location.pathname === '/' || location.pathname === '/home';
+  const isLogin = location.pathname === '/login';
+  const isSignup = location.pathname === '/signup';
 
-    // Disable sidebar/navbar elements on strictly standalone pages like login
-    if (isLogin || isSignup) {
-        return <>{children}</>;
-    }
+  // Disable sidebar/navbar elements on strictly standalone pages like login
+  if (isLogin || isSignup) {
+    return <>{children}</>;
+  }
 
-    return (
-        <div className={`app-layout role-${user?.role || 'client'}`}>
-            {!isHome && user?.role === 'ROLE_ADMIN' && <Sidebar currentTab={location.pathname.substring(1)} setTab={() => {}} userRole={user?.role || 'client'} />}
-            
-            <div className="content-wrapper">
-                <Header currentTab={location.pathname.substring(1)} onNavigate={() => {}} userRole={user?.role || 'client'} setUserRole={() => {}} />
-                
-                <main className="main-view animate-in">
-                    {children}
-                </main>
-                
-                {isHome && <Footer />}
-            </div>
-        </div>
-    );
+  return (
+    <div className={`app-layout role-${user?.role || 'client'}`}>
+      {!isHome && user?.role === 'ROLE_ADMIN' && <Sidebar currentTab={location.pathname.substring(1)} setTab={() => { }} userRole={user?.role || 'client'} />}
+
+      <div className="content-wrapper">
+        <Header currentTab={location.pathname.substring(1)} onNavigate={() => { }} userRole={user?.role || 'client'} setUserRole={() => { }} />
+
+        <main className="main-view animate-in">
+          {children}
+        </main>
+
+        {isHome && <Footer />}
+      </div>
+    </div>
+  );
 };
 
 function App() {
@@ -79,32 +79,32 @@ function App() {
 
   return (
     <GoogleOAuthProvider clientId={clientId}>
-    <BrowserRouter>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<HomePage onNavigate={() => {}} />} />
-          <Route path="/home" element={<Navigate to="/" replace />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/catalogue" element={<CataloguePage setTab={() => {}} />} />
-          <Route path="/booking" element={<BookingPage setTab={() => {}} />} />
-          
-          {/* Protected Routes */}
-          <Route path="/dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute><ViewProfilePage /></ProtectedRoute>} />
-          <Route path="/my-bookings" element={<ProtectedRoute><MyBookingsPage setTab={() => {}} /></ProtectedRoute>} />
-          <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
-          <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
-          
-          {/* Admin Routes */}
-          <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-          <Route path="/admin-bookings" element={<AdminRoute><AdminBookingsPage /></AdminRoute>} />
-          <Route path="/maintenance" element={<AdminRoute><ComingSoon title="Maintenance & Incident Ticketing" /></AdminRoute>} />
-          
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Layout>
-    </BrowserRouter>
+      <BrowserRouter>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<HomePage onNavigate={() => { }} />} />
+            <Route path="/home" element={<Navigate to="/" replace />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/catalogue" element={<CataloguePage setTab={() => { }} />} />
+            <Route path="/booking" element={<BookingPage setTab={() => { }} />} />
+
+            {/* Protected Routes */}
+            <Route path="/dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><ViewProfilePage /></ProtectedRoute>} />
+            <Route path="/my-bookings" element={<ProtectedRoute><MyBookingsPage setTab={() => { }} /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+            <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
+
+            {/* Admin Routes */}
+            <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+            <Route path="/admin-bookings" element={<AdminRoute><AdminBookingsPage /></AdminRoute>} />
+            <Route path="/maintenance" element={<AdminRoute><ComingSoon title="Maintenance & Incident Ticketing" /></AdminRoute>} />
+
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Layout>
+      </BrowserRouter>
     </GoogleOAuthProvider>
   );
 }
