@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Search,
   Bell,
   User,
   Calendar,
@@ -94,30 +93,16 @@ const Header = () => {
             )}
           </div>
 
-          {/* ── Center: Search ── */}
+          {/* ── Center: Nav (home only) ── */}
           <div className="header-center hide-mobile">
-            {isHome ? (
+            {isHome && (
               <nav className="header-nav">
                 <button onClick={() => nav('catalogue')}>Catalogue</button>
                 <button className={currentTab === 'booking' ? 'active-nav' : ''} onClick={() => nav('booking')}>
                   Booking
                 </button>
-                {user && (
-                    <button className={currentTab === 'dashboard' ? 'active-nav' : ''} onClick={() => nav('dashboard')}>
-                      Dashboard
-                    </button>
-                )}
                 {user?.role === 'ROLE_ADMIN' && <button onClick={() => nav('admin')}>Admin Hub</button>}
               </nav>
-            ) : (
-              <div className="header-search-box">
-                <Search size={18} className="search-icon" />
-                <input
-                  type="text"
-                  placeholder="Find resources, documents..."
-                  className="search-input"
-                />
-              </div>
             )}
           </div>
 

@@ -77,14 +77,39 @@ const NotificationsPage = () => {
                         <div className="divide-y divide-gray-100">
                             {notifications.map(notification => {
                                 const isAdminAlert = notification.message.startsWith('ADMIN MESSAGE:');
-                                const displayMsg = isAdminAlert ? notification.message.replace('ADMIN MESSAGE:', '').trim() : notification.message;
+                                let displayMsg = isAdminAlert ? notification.message.replace('ADMIN MESSAGE:', '').trim() : notification.message;
+                                
+                                const hasMyBookingsAction = displayMsg.includes('[ACTION:MY_BOOKINGS]');
+                                if (hasMyBookingsAction) {
+                                    displayMsg = displayMsg.replace('[ACTION:MY_BOOKINGS]', '').trim();
+                                }
+
+                                const hasCatalogueAction = displayMsg.includes('[ACTION:CATALOGUE]');
+                                if (hasCatalogueAction) {
+                                    displayMsg = displayMsg.replace('[ACTION:CATALOGUE]', '').trim();
+                                }
+
+                                // Extract [REASON]...[/REASON] tag
+                                const reasonMatch = displayMsg.match(/\[REASON\]([\s\S]*?)\[\/REASON\]/);
+                                const rejectionReason = reasonMatch ? reasonMatch[1].trim() : null;
+                                if (rejectionReason) {
+                                    displayMsg = displayMsg.replace(/\[REASON\][\s\S]*?\[\/REASON\]/, '').trim();
+                                }
 
                                 return (
-                                <div key={notification.id} className={`p-6 transition-colors flex gap-4 animate-in slide-in-from-left-4 duration-300 ${isAdminAlert ? 'bg-red-50/40 border-l-4 border-red-500 hover:bg-red-50/80 shadow-sm' : 'hover:bg-gray-50'}`}>
+                                <div key={notification.id} className={`p-6 transition-colors flex gap-4 animate-in slide-in-from-left-4 duration-300 ${
+                                    isAdminAlert ? 'bg-red-50/40 border-l-4 border-red-500 hover:bg-red-50/80 shadow-sm'
+                                    : hasCatalogueAction ? 'bg-emerald-50/60 border-l-4 border-emerald-500 hover:bg-emerald-50 shadow-sm'
+                                    : 'hover:bg-gray-50'
+                                }`}>
                                     <div className="mt-1">
                                         {isAdminAlert ? (
                                             <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 shadow-sm border border-red-200 mt-1">
                                                 <ShieldAlert className="w-4 h-4" />
+                                            </div>
+                                        ) : hasCatalogueAction ? (
+                                            <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 shadow-sm border border-emerald-200 mt-1 text-base">
+                                                🏫
                                             </div>
                                         ) : (
                                             <div className="w-2 h-2 bg-[#534AB7] rounded-full mt-2"></div>
@@ -94,10 +119,46 @@ const NotificationsPage = () => {
                                         {isAdminAlert && (
                                             <div className="text-[0.65rem] font-bold text-red-600 tracking-widest uppercase mb-1">Official System Alert</div>
                                         )}
-                                        <p className={`${isAdminAlert ? 'text-red-900 font-bold' : 'text-gray-900 font-semibold'} mb-1`}>
+                                        {hasCatalogueAction && (
+                                            <div className="text-[0.65rem] font-bold text-emerald-600 tracking-widest uppercase mb-1">🏫 New Facility Announcement</div>
+                                        )}
+                                        <p className={`${
+                                            isAdminAlert ? 'text-red-900 font-bold'
+                                            : hasCatalogueAction ? 'text-emerald-900 font-semibold'
+                                            : 'text-gray-900 font-semibold'
+                                        } mb-1`}>
                                             {displayMsg}
                                         </p>
-                                        <div className={`flex items-center text-sm ${isAdminAlert ? 'text-red-500/80' : 'text-gray-400'}`}>
+                                        {rejectionReason && (
+                                            <div className="mt-2 mb-3 flex items-start gap-2 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+                                                <span className="text-red-500 mt-0.5 flex-shrink-0">⚠</span>
+                                                <div>
+                                                    <span className="text-[0.65rem] font-bold text-red-500 tracking-widest uppercase block mb-0.5">Rejection Reason</span>
+                                                    <span className="text-red-800 font-semibold text-sm">{rejectionReason}</span>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {hasMyBookingsAction && (
+                                            <button 
+                                                onClick={() => navigate('/my-bookings')}
+                                                className="mt-2 mb-3 bg-[#534AB7] hover:bg-[#3C3489] text-white text-sm px-4 py-1.5 rounded-lg font-medium transition-colors border border-[#3C3489]"
+                                            >
+                                                View My Bookings
+                                            </button>
+                                        )}
+                                        {hasCatalogueAction && (
+                                            <button 
+                                                onClick={() => navigate('/catalogue')}
+                                                className="mt-2 mb-3 bg-emerald-600 hover:bg-emerald-700 text-white text-sm px-4 py-1.5 rounded-lg font-medium transition-colors border border-emerald-700"
+                                            >
+                                                🏫 Browse Catalogue
+                                            </button>
+                                        )}
+                                        <div className={`flex items-center text-sm ${
+                                            isAdminAlert ? 'text-red-500/80'
+                                            : hasCatalogueAction ? 'text-emerald-600/70'
+                                            : 'text-gray-400'
+                                        }`}>
                                             <Clock className="w-4 h-4 mr-1" />
                                             {new Date(notification.createdAt).toLocaleString()}
                                         </div>

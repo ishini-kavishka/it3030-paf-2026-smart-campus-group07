@@ -215,6 +215,9 @@ public class AuthService {
         if (request.getAddress() != null && !request.getAddress().trim().isEmpty()) {
             user.setAddress(request.getAddress().trim());
         }
+        if (request.getProfileImage() != null && !request.getProfileImage().trim().isEmpty()) {
+            user.setProfileImage(request.getProfileImage().trim());
+        }
         
         userRepository.save(user);
 

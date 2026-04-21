@@ -1,7 +1,10 @@
 package backend.controller;
 
 import backend.model.Resource.Resource;
+import backend.model.User;
 import backend.repository.ResourceRepository;
+import backend.repository.UserRepository;
+import backend.service.NotificationService;
 import backend.exception.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,12 @@ public class ResourceController {
 
     @Autowired
     private ResourceRepository resourceRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private NotificationService notificationService;
 
     // ========== GET Endpoints ==========
     
@@ -128,8 +137,24 @@ public class ResourceController {
             resource.setId("demo-" + System.currentTimeMillis());
             return new ResponseEntity<>(resource, HttpStatus.CREATED);
         }
-        Resource savedResource = resourceRepository.save(resource);
-        return new ResponseEntity<>(savedResource, HttpStatus.CREATED);
+        Resource newResource = resourceRepository.save(resource);
+
+        // Broadcast notification to all non-admin users
+        String fromTime = newResource.getAvailableFrom() != null ? newResource.getAvailableFrom().toString() : "08:00";
+        String toTime   = newResource.getAvailableTo()   != null ? newResource.getAvailableTo().toString()   : "20:00";
+        String broadcastMsg = "\uD83C\uDFEB New Facility Available: " + newResource.getName()
+                + " | Type: " + newResource.getType()
+                + " | Location: " + newResource.getLocation()
+                + " | Capacity: " + newResource.getCapacity() + " people"
+                + " | Hours: " + fromTime + " - " + toTime
+                + " [ACTION:CATALOGUE]";
+
+        List<User> targetUsers = userRepository.findByRoleNot("ROLE_ADMIN");
+        for (User u : targetUsers) {
+            notificationService.createNotification(u.getUsername(), broadcastMsg);
+        }
+
+        return new ResponseEntity<>(newResource, HttpStatus.CREATED);
     }
 
     // ========== PUT Endpoint ==========

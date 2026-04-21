@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { User, Lock, Trash2, LogOut, Save, LayoutDashboard } from 'lucide-react';
+import { User, Lock, Trash2, LogOut, Save, LayoutDashboard, Upload } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const SettingsPage = () => {
@@ -13,6 +13,18 @@ const SettingsPage = () => {
     const [dob, setDob] = useState(user?.dob || '');
     const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || '');
     const [address, setAddress] = useState(user?.address || '');
+    const [profileImage, setProfileImage] = useState(user?.profileImage || '');
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setProfileImage(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
     
     const [profileMsg, setProfileMsg] = useState({ type: '', text: '' });
     const [profileLoading, setProfileLoading] = useState(false);
@@ -39,7 +51,7 @@ const SettingsPage = () => {
 
         setProfileLoading(true);
         try {
-            await updateProfile({ firstName, lastName, email, dob, phoneNumber, address });
+            await updateProfile({ firstName, lastName, email, dob, phoneNumber, address, profileImage });
             setProfileMsg({ type: 'success', text: 'Profile updated successfully!' });
         } catch (error) {
             setProfileMsg({ type: 'error', text: 'Failed to update profile.' });
@@ -105,6 +117,21 @@ const SettingsPage = () => {
                         </div>
                     )}
                     <form onSubmit={handleUpdateProfile} className="space-y-4">
+                        <div className="flex justify-center mb-6">
+                            <div className="relative">
+                                <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border-2 border-dashed border-gray-300 shadow-sm">
+                                    {profileImage ? (
+                                        <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <User className="w-8 h-8 text-gray-400" />
+                                    )}
+                                </div>
+                                <label className="absolute bottom-0 right-0 bg-[#534AB7] text-white p-1.5 rounded-full cursor-pointer hover:bg-[#3C3489] transition-colors shadow-md">
+                                    <Upload size={14} />
+                                    <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
+                                </label>
+                            </div>
+                        </div>
                         <div className="flex gap-4">
                             <div className="flex-1">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>

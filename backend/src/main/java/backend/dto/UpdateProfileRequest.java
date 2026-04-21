@@ -17,6 +17,7 @@ public class UpdateProfileRequest {
     private java.time.LocalDate dob;
     private String phoneNumber;
     private String address;
+    private String profileImage;
 
     public java.time.LocalDate getDob() { return dob; }
     public void setDob(java.time.LocalDate dob) { this.dob = dob; }
@@ -26,4 +27,7 @@ public class UpdateProfileRequest {
 
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
+
+    public String getProfileImage() { return profileImage; }
+    public void setProfileImage(String profileImage) { this.profileImage = profileImage; }
 }

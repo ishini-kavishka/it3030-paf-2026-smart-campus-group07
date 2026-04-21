@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CalendarClock, Plus, X, Edit, Trash2, Clock, Users, ArrowRight, CheckCircle2, AlertCircle, XCircle, Filter, Search } from 'lucide-react';
+import { bookingService } from '../services/api';
 
-const MyBookingsPage = ({ setTab }) => {
+const MyBookingsPage = () => {
+  const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -13,13 +16,8 @@ const MyBookingsPage = ({ setTab }) => {
   const fetchBookings = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:8082/api/bookings/my', {
-        headers: { 'x-user-id': 'user-123' }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setBookings(data);
-      }
+      const data = await bookingService.getUserBookings();
+      setBookings(data);
     } catch (err) {
       console.error(err);
     } finally {
@@ -33,15 +31,12 @@ const MyBookingsPage = ({ setTab }) => {
 
   const handleEdit = (booking) => {
     localStorage.setItem('editBooking', JSON.stringify(booking));
-    if (setTab) setTab('booking');
+    navigate('/booking');
   };
 
   const handleCancel = async (id) => {
     try {
-      await fetch(`http://localhost:8082/api/bookings/${id}/cancel`, {
-        method: 'PATCH',
-        headers: { 'x-user-id': 'user-123' }
-      });
+      await bookingService.cancelBooking(id);
       fetchBookings();
     } catch (err) {
       console.error(err);
@@ -51,10 +46,7 @@ const MyBookingsPage = ({ setTab }) => {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this booking permanently?')) return;
     try {
-      await fetch(`http://localhost:8082/api/bookings/${id}`, {
-        method: 'DELETE',
-        headers: { 'x-user-id': 'user-123' }
-      });
+      await bookingService.deleteBooking(id);
       fetchBookings();
     } catch (err) {
       console.error(err);
@@ -106,7 +98,7 @@ const MyBookingsPage = ({ setTab }) => {
           </p>
           <button 
             className="btn btn-primary" 
-            onClick={() => { if (setTab) setTab('booking'); }} 
+            onClick={() => navigate('/catalogue')} 
             style={{ 
               background: '#534AB7', 
               border: 'none',
@@ -116,7 +108,7 @@ const MyBookingsPage = ({ setTab }) => {
             }}
           >
             <Plus size={18} />
-            Create New Booking
+            Book a Resource
           </button>
         </div>
         
@@ -186,8 +178,8 @@ const MyBookingsPage = ({ setTab }) => {
           <p style={{ color: '#64748b', maxWidth: '400px', marginBottom: '2rem' }}>
             You haven't made any reservations. Explore our catalogue to find the perfect space for your next activity.
           </p>
-          <button className="btn btn-primary" onClick={() => { if (setTab) setTab('booking'); }}>
-            Book a Resource <ArrowRight size={16} />
+          <button className="btn btn-primary" onClick={() => navigate('/catalogue')}>
+            Browse Catalogue <ArrowRight size={16} />
           </button>
         </div>
       ) : (

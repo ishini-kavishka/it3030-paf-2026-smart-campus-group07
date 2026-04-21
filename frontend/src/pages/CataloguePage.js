@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { resourceService } from '../services/api';
 import {
   Search, Filter, MapPin, Users, Clock, Layers,
@@ -102,7 +103,7 @@ const PublicResourceCard = ({ resource, onViewDetails }) => {
 };
 
 // ─── Detail Modal ─────────────────────────────────────────────────────────────
-const ResourceDetailModal = ({ resource, onClose, setTab }) => {
+const ResourceDetailModal = ({ resource, onClose, navigate }) => {
   if (!resource) return null;
   const meta = getTypeMeta(resource.type);
   const Icon = meta.icon;
@@ -209,7 +210,7 @@ const ResourceDetailModal = ({ resource, onClose, setTab }) => {
                 onClick={() => {
                   onClose();
                   localStorage.setItem('bookingResource', resource.id);
-                  if (setTab) setTab('booking');
+                  if (navigate) navigate('/booking');
                 }}
                 className="btn btn-primary flex-1"
                 style={{ background: meta.color, borderColor: meta.color, color: '#fff' }}
@@ -225,7 +226,8 @@ const ResourceDetailModal = ({ resource, onClose, setTab }) => {
 };
 
 // ─── Main Catalogue Page ──────────────────────────────────────────────────────
-const CataloguePage = ({ setTab }) => {
+const CataloguePage = () => {
+  const navigate = useNavigate();
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -274,7 +276,7 @@ const CataloguePage = ({ setTab }) => {
         <div className="hero-glow" />
         <div className="hero-content">
           <button 
-            onClick={() => { if (setTab) setTab('home'); }}
+            onClick={() => { navigate('/'); }}
             style={{ 
               background: 'rgba(255, 255, 255, 0.6)',
               backdropFilter: 'blur(10px)',
@@ -482,7 +484,7 @@ const CataloguePage = ({ setTab }) => {
         <ResourceDetailModal
           resource={selectedResource}
           onClose={() => setSelectedResource(null)}
-          setTab={setTab}
+          navigate={navigate}
         />
       )}
     </div>

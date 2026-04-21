@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CalendarPlus, ArrowLeft } from 'lucide-react';
+import { bookingService } from '../services/api';
 
-const BookingPage = ({ setTab }) => {
+const BookingPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     resourceId: '',
     date: '',
@@ -65,33 +68,20 @@ const BookingPage = ({ setTab }) => {
       return;
     }
 
-    const url = editingId
-      ? `http://localhost:8082/api/bookings/${editingId}`
-      : 'http://localhost:8082/api/bookings';
-    const method = editingId ? 'PUT' : 'POST';
-
     try {
-      const res = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          'x-user-id': 'user-123'
-        },
-        body: JSON.stringify(formData)
-      });
-      if (!res.ok) {
-        const errData = await res.json();
-        let msg = errData.message || 'Failed to save booking';
-        // Strip Spring Boot status code prefix like '409 CONFLICT "message"' or '400 BAD_REQUEST "message"'
-        msg = msg.replace(/^\d{3} [A-Z\s_]+ "(.*?)"$/, '$1');
-        throw new Error(msg);
+      if (editingId) {
+        await bookingService.updateBooking(editingId, formData);
+      } else {
+        await bookingService.createBooking(formData);
       }
       setSuccessMsg('Booking saved successfully!');
       setTimeout(() => {
-        if (setTab) setTab('my-bookings');
+        navigate('/my-bookings');
       }, 1500);
     } catch (err) {
-      setErrorMsg(err.message);
+      let msg = err.response?.data?.message || err.message || 'Failed to save booking';
+      msg = msg.replace(/^\d{3} [A-Z\s_]+ "(.*?)"$/, '$1');
+      setErrorMsg(msg);
     }
   };
 
@@ -100,7 +90,7 @@ const BookingPage = ({ setTab }) => {
       <div className="catalogue-hero" style={{ background: 'linear-gradient(135deg, #185FA5 0%, #111827 100%)', borderColor: '#185FA5', marginBottom: '2rem' }}>
         <div className="hero-content">
           <button 
-            onClick={() => { if (setTab) setTab('catalogue'); }}
+            onClick={() => { navigate('/catalogue'); }}
             style={{ 
               background: 'rgba(255, 255, 255, 0.1)',
               backdropFilter: 'blur(10px)',
@@ -197,7 +187,7 @@ const BookingPage = ({ setTab }) => {
           </div>
 
           <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid #e2e8f0' }}>
-            <button type="button" className="btn btn-ghost" onClick={() => { if (setTab) setTab('my-bookings'); }} style={{ padding: '0.8rem 1.5rem', fontSize: '0.95rem' }}>Cancel</button>
+            <button type="button" className="btn btn-ghost" onClick={() => { navigate('/my-bookings'); }} style={{ padding: '0.8rem 1.5rem', fontSize: '0.95rem' }}>Cancel</button>
             <button type="submit" className="btn btn-primary" style={{ padding: '0.8rem 2rem', fontSize: '0.95rem', boxShadow: '0 4px 14px rgba(83, 74, 183, 0.3)' }}>{editingId ? 'Update Booking' : 'Submit Request'}</button>
           </div>
         </form>

@@ -2,7 +2,6 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
-  Database,
   ShieldCheck,
   CalendarClock,
   Wrench,
@@ -55,8 +54,8 @@ const Sidebar = ({ currentTab, setTab }) => {
     <div className="sidebar">
       {/* ── Brand ─────────────────────────────────────────────── */}
       <div className="sidebar-header">
-        <div className="logo-icon">
-          <Database size={24} />
+        <div className="logo-icon-sm bg-white overflow-hidden rounded-xl border border-gray-100 shadow-sm" style={{ width: '42px', height: '42px', padding: '4px', flexShrink: 0 }}>
+          <img src="/logo.png" alt="SmartCampus" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
         </div>
         <div>
           <h1 className="brand-name">SmartCampus</h1>

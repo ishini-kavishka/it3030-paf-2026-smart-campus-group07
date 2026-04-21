@@ -68,7 +68,7 @@ const Layout = ({ children }) => {
                     {children}
                 </main>
                 
-                <Footer />
+                {isHome && <Footer />}
             </div>
         </div>
     );

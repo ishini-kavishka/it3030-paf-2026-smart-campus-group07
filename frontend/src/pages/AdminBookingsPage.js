@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ShieldCheck, CheckSquare, XSquare, Search, Filter } from 'lucide-react';
+import { bookingService } from '../services/api';
 
 const AdminBookingsPage = () => {
   const [bookings, setBookings] = useState([]);
@@ -13,11 +14,8 @@ const AdminBookingsPage = () => {
   const fetchBookings = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:8082/api/bookings');
-      if (res.ok) {
-        const data = await res.json();
-        setBookings(data);
-      }
+      const data = await bookingService.getAllBookings();
+      setBookings(data);
     } catch (err) {
       console.error(err);
     } finally {
@@ -37,11 +35,7 @@ const AdminBookingsPage = () => {
     }
 
     try {
-      await fetch(`http://localhost:8082/api/bookings/${id}/status`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status, reason })
-      });
+      await bookingService.updateBookingStatus(id, status, reason);
       fetchBookings();
     } catch (err) {
       console.error(err);

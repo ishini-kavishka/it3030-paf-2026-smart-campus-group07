@@ -26,6 +26,9 @@ public class BookingService {
     @Autowired
     private ResourceRepository resourceRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     public BookingResponseDTO createBooking(@NonNull BookingRequestDTO request, @NonNull String userId) {
         Resource resource = resourceRepository.findById(request.getResourceId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found"));
@@ -70,6 +73,7 @@ public class BookingService {
         booking.setUpdatedAt(LocalDateTime.now());
 
         Booking savedBooking = bookingRepository.save(booking);
+        notificationService.createNotification(userId, "Your booking request for " + resource.getName() + " on " + booking.getDate() + " is currently PENDING admin approval.");
         return mapToDTO(savedBooking, resource);
     }
 
@@ -145,7 +149,17 @@ public class BookingService {
         }
         booking.setUpdatedAt(LocalDateTime.now());
         Booking savedBooking = bookingRepository.save(booking);
-        return mapToDTOWithResourceFetch(savedBooking);
+
+        Resource resource = resourceRepository.findById(booking.getResourceId()).orElse(null);
+        String resourceName = resource != null ? resource.getName() : "Unknown Resource";
+        
+        if (newStatus == BookingStatus.APPROVED) {
+            notificationService.createNotification(booking.getUserId(), "Your booking for " + resourceName + " on " + booking.getDate() + " has been APPROVED! [ACTION:MY_BOOKINGS]");
+        } else if (newStatus == BookingStatus.REJECTED) {
+            notificationService.createNotification(booking.getUserId(), "Your booking for " + resourceName + " on " + booking.getDate() + " was REJECTED. [REASON]" + reason + "[/REASON]");
+        }
+
+        return mapToDTO(savedBooking, resource);
     }
 
     public BookingResponseDTO cancelBooking(@NonNull String id, @NonNull String userId) {

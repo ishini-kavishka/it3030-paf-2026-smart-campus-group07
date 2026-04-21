@@ -26,7 +26,8 @@ public class BookingController {
     @PostMapping
     public ResponseEntity<BookingResponseDTO> createBooking(
             @Valid @RequestBody @NonNull BookingRequestDTO request,
-            @RequestHeader(value = "x-user-id", defaultValue = "user-123") @NonNull String userId) {
+            org.springframework.security.core.Authentication authentication) {
+        String userId = authentication.getName();
         BookingResponseDTO response = bookingService.createBooking(request, userId);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -34,7 +35,8 @@ public class BookingController {
     // GET /api/bookings/my
     @GetMapping("/my")
     public ResponseEntity<List<BookingResponseDTO>> getMyBookings(
-            @RequestHeader(value = "x-user-id", defaultValue = "user-123") @NonNull String userId) {
+            org.springframework.security.core.Authentication authentication) {
+        String userId = authentication.getName();
         return ResponseEntity.ok(bookingService.getUserBookings(userId));
     }
 
@@ -49,7 +51,8 @@ public class BookingController {
     public ResponseEntity<BookingResponseDTO> updateBooking(
             @PathVariable @NonNull String id,
             @Valid @RequestBody @NonNull BookingRequestDTO request,
-            @RequestHeader(value = "x-user-id", defaultValue = "user-123") @NonNull String userId) {
+            org.springframework.security.core.Authentication authentication) {
+        String userId = authentication.getName();
         return ResponseEntity.ok(bookingService.updateBooking(id, request, userId));
     }
 
@@ -67,7 +70,8 @@ public class BookingController {
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<BookingResponseDTO> cancelBooking(
             @PathVariable @NonNull String id,
-            @RequestHeader(value = "x-user-id", defaultValue = "user-123") @NonNull String userId) {
+            org.springframework.security.core.Authentication authentication) {
+        String userId = authentication.getName();
         return ResponseEntity.ok(bookingService.cancelBooking(id, userId));
     }
 
@@ -75,7 +79,8 @@ public class BookingController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBooking(
             @PathVariable @NonNull String id,
-            @RequestHeader(value = "x-user-id", defaultValue = "user-123") @NonNull String userId) {
+            org.springframework.security.core.Authentication authentication) {
+        String userId = authentication.getName();
         bookingService.deleteBooking(id, userId);
         return ResponseEntity.noContent().build();
     }

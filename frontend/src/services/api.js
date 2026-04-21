@@ -78,6 +78,43 @@ export const resourceService = {
   }
 };
 
+export const bookingService = {
+  getAllBookings: async () => {
+    const response = await api.get('/bookings');
+    return response.data;
+  },
+
+  getUserBookings: async () => {
+    const response = await api.get('/bookings/my');
+    return response.data;
+  },
+
+  createBooking: async (bookingData) => {
+    const response = await api.post('/bookings', bookingData);
+    return response.data;
+  },
+
+  updateBooking: async (id, bookingData) => {
+    const response = await api.put(`/bookings/${id}`, bookingData);
+    return response.data;
+  },
+
+  updateBookingStatus: async (id, status, reason) => {
+    const response = await api.patch(`/bookings/${id}/status`, { status, reason });
+    return response.data;
+  },
+
+  cancelBooking: async (id) => {
+    const response = await api.patch(`/bookings/${id}/cancel`);
+    return response.data;
+  },
+
+  deleteBooking: async (id) => {
+    const response = await api.delete(`/bookings/${id}`);
+    return response.data;
+  }
+};
+
 export const notificationService = {
   // Get all notifications for the current user
   getNotifications: async () => {
