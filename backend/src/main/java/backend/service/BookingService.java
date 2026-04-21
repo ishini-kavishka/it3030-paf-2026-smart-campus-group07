@@ -179,10 +179,10 @@ public class BookingService {
         return mapToDTOWithResourceFetch(bookingRepository.save(booking));
     }
 
-    public void deleteBooking(@NonNull String id, @NonNull String userId) {
+    public void deleteBooking(@NonNull String id, @NonNull String userId, boolean isAdmin) {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Booking not found"));
-        if (!booking.getUserId().equals(userId)) {
+        if (!isAdmin && !booking.getUserId().equals(userId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not authorized");
         }
         bookingRepository.deleteById(id);
