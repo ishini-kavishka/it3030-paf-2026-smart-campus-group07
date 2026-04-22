@@ -10,11 +10,14 @@ import {
   LayoutDashboard,
   Home,
   LogOut,
+  BookOpen,
+  Calendar
 } from 'lucide-react';
 
-const Sidebar = ({ currentTab, setTab }) => {
+const Sidebar = ({ currentTab, setTab, userRole }) => {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  
   const menuItems = [
     {
       section: 'General',
@@ -22,21 +25,31 @@ const Sidebar = ({ currentTab, setTab }) => {
         { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard Overview' },
       ],
     },
-    {
-      section: 'Facilities',
-      items: [
-        { id: 'admin', icon: ShieldCheck, label: 'Facilities & Assets' },
-      ],
-    },
-
-    {
-      section: 'Operations',
-      items: [
-        { id: 'admin-bookings', icon: CalendarClock, label: 'Admin Bookings' },
-        { id: 'maintenance', icon: Wrench, label: 'Maintenance' },
-        { id: 'notifications', icon: Bell, label: 'Notifications' },
-      ],
-    },
+    ...(userRole === 'ROLE_ADMIN' ? [
+      {
+        section: 'Facilities',
+        items: [
+          { id: 'admin', icon: ShieldCheck, label: 'Facilities & Assets' },
+        ],
+      },
+      {
+        section: 'Operations',
+        items: [
+          { id: 'admin-bookings', icon: CalendarClock, label: 'Admin Bookings' },
+          { id: 'maintenance', icon: Wrench, label: 'Maintenance' },
+          { id: 'notifications', icon: Bell, label: 'Notifications' },
+        ],
+      }
+    ] : [
+      {
+        section: 'My Activities',
+        items: [
+          { id: 'my-bookings', icon: CalendarClock, label: 'My Bookings' },
+          { id: 'maintenance', icon: Wrench, label: 'My Incidents' },
+          { id: 'notifications', icon: Bell, label: 'Notifications' },
+        ],
+      }
+    ]),
     {
       section: 'System',
       items: [
@@ -119,10 +132,8 @@ const Sidebar = ({ currentTab, setTab }) => {
             border: '1px solid rgba(244, 63, 94, 0.1)'
           }}
           onClick={() => { 
-            if (window.confirm('Are you sure you want to sign out?')) {
-               logout();
-               navigate('/');
-            } 
+             logout();
+             navigate('/');
           }}
         >
           <LogOut size={18} />

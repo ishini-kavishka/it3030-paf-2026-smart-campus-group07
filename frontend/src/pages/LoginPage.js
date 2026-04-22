@@ -339,6 +339,7 @@ const LoginPage = () => {
                             <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900 cursor-pointer select-none">Remember me</label>
                         </div>
 
+<<<<<<< HEAD
                         <button
                             type="button"
                             onClick={() => { setMode('FORGOT'); setError(''); }}
@@ -346,6 +347,13 @@ const LoginPage = () => {
                         >
                             Forgot your password?
                         </button>
+=======
+                        <div className="text-sm">
+                            <a href="#!" className="font-medium text-[#534AB7] hover:text-[#3C3489] transition-colors">
+                                Forgot your password?
+                            </a>
+                        </div>
+>>>>>>> develop
                     </div>
 
                     <div>

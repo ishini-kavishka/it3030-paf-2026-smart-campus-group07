@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import './App.css';
@@ -7,7 +7,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import AdminDashboard from './pages/AdminDashboard';
 import CataloguePage from './pages/CataloguePage';
-import DashboardOverview from './pages/DashboardOverview';
+// import DashboardOverview from './pages/DashboardOverview';
 import MyBookingsPage from './pages/MyBookingsPage';
 import AdminBookingsPage from './pages/AdminBookingsPage';
 import HomePage from './pages/HomePage';
@@ -18,6 +18,8 @@ import UserDashboard from './pages/UserDashboard';
 import SettingsPage from './pages/SettingsPage';
 import ViewProfilePage from './pages/ViewProfilePage';
 import NotificationsPage from './pages/NotificationsPage';
+import MaintenancePage from './pages/MaintenancePage';
+import ClientTicketsPage from './pages/ClientTicketsPage';
 import { useAuth } from './context/AuthContext';
 
 const ComingSoon = ({ title }) => (
@@ -45,6 +47,18 @@ const AdminRoute = ({ children }) => {
     return children;
 };
 
+const DynamicMaintenanceRoute = () => {
+    const { user, loading } = useAuth();
+    if (loading) return <div>Loading...</div>;
+    if (!user) return <Navigate to="/login" replace />;
+    
+    if (user.role === 'ROLE_ADMIN') {
+        return <MaintenancePage />;
+    }
+    
+    return <ClientTicketsPage />;
+};
+
 const Layout = ({ children }) => {
     const location = useLocation();
     const { user } = useAuth();
@@ -59,7 +73,7 @@ const Layout = ({ children }) => {
 
     return (
         <div className={`app-layout role-${user?.role || 'client'}`}>
-            {!isHome && user?.role === 'ROLE_ADMIN' && <Sidebar currentTab={location.pathname.substring(1)} setTab={() => {}} userRole={user?.role || 'client'} />}
+            {!isHome && user && user.role === 'ROLE_ADMIN' && <Sidebar currentTab={location.pathname.substring(1)} setTab={() => {}} userRole={user.role || 'client'} />}
             
             <div className="content-wrapper">
                 <Header currentTab={location.pathname.substring(1)} onNavigate={() => {}} userRole={user?.role || 'client'} setUserRole={() => {}} />
@@ -99,7 +113,9 @@ function App() {
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           <Route path="/admin-bookings" element={<AdminRoute><AdminBookingsPage /></AdminRoute>} />
-          <Route path="/maintenance" element={<AdminRoute><ComingSoon title="Maintenance & Incident Ticketing" /></AdminRoute>} />
+          
+          {/* Dynamic Mixed Role Route */}
+          <Route path="/maintenance" element={<DynamicMaintenanceRoute />} />
           
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

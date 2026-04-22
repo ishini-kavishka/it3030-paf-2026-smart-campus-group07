@@ -29,7 +29,7 @@ const AdminUserList = () => {
         } finally {
             setLoading(false);
         }
-    }, [token, user]);
+    }, [token, user.username]);
 
     useEffect(() => { fetchUsers(); }, [fetchUsers]);
 

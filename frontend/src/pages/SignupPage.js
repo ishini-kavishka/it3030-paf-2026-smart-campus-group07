@@ -23,7 +23,6 @@ const SignupPage = () => {
     
     // Step 2: Email verification
     const [otp, setOtp] = useState('');
-    const [otpSent, setOtpSent] = useState(false); // eslint-disable-line no-unused-vars
     
     // Step 3: Address
     const [address, setAddress] = useState('');
@@ -78,7 +77,6 @@ const SignupPage = () => {
             try {
                 // Check email & send OTP
                 await authApi.sendOtp(email);
-                setOtpSent(true);
                 setStep(2);
             } catch (err) {
                 let errorMsg = "Failed to send OTP. Please try again.";
