@@ -1,0 +1,129 @@
+package backend.controller;
+
+import backend.dto.*;
+import backend.service.AuthService;
+import backend.service.EmailService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/auth")
+public class AuthController {
+
+    private final AuthService authService;
+    private final EmailService emailService;
+
+    public AuthController(AuthService authService, EmailService emailService) {
+        this.authService = authService;
+        this.emailService = emailService;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        try {
+            return ResponseEntity.ok(authService.login(request));
+        } catch (Exception e) {
+            String msg = e.getMessage() != null ? e.getMessage() : "";
+            if ("ACCOUNT_SUSPENDED".equals(msg)) {
+                return ResponseEntity.status(403).body(Map.of("message", "Your account has been suspended. Please contact support."));
+            }
+            return ResponseEntity.status(401).body(Map.of("message", "Invalid username or password."));
+        }
+    }
+
+    @PostMapping("/google")
+    public ResponseEntity<AuthResponse> googleLogin(@RequestBody GoogleLoginRequest request) {
+        return ResponseEntity.ok(authService.googleLogin(request.getToken()));
+    }
+
+    @PostMapping("/signup/send-otp")
+    public ResponseEntity<?> sendOtp(@RequestBody OtpRequest request) {
+        String email = request.getEmail();
+        if (email == null || email.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Email is required."));
+        }
+
+        try {
+            if (authService.emailExists(email)) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Email is already registered."));
+            }
+            emailService.sendOtp(email);
+            return ResponseEntity.ok(Map.of("message", "OTP sent successfully to " + email));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("message", "Failed to send OTP. Please check your email address or server settings."));
+        }
+    }
+
+    @PostMapping("/signup/verify-otp")
+    public ResponseEntity<?> verifyOtp(@RequestBody OtpRequest request) {
+        boolean isValid = emailService.verifyOtp(request.getEmail(), request.getOtp());
+        if (isValid) {
+            return ResponseEntity.ok("OTP verified successfully.");
+        } else {
+            return ResponseEntity.badRequest().body("Invalid or expired OTP.");
+        }
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody SignupRequest request) {
+        if (authService.usernameExists(request.getUsername())) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Username is already taken."));
+        }
+        if (authService.emailExists(request.getEmail())) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Email is already registered."));
+        }
+        
+        try {
+            authService.signup(request);
+            return ResponseEntity.ok(Map.of("message", "User registered successfully."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Failed to register user: " + e.getMessage()));
+        }
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<AuthResponse> updateProfile(@RequestBody UpdateProfileRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        return ResponseEntity.ok(authService.updateProfile(currentUsername, request));
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        try {
+            authService.changePassword(currentUsername, request);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> body) {
+        String email = body.get("email");
+        String newPassword = body.get("newPassword");
+        if (email == null || newPassword == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Email and new password are required."));
+        }
+        try {
+            AuthResponse response = authService.resetPassword(email.trim(), newPassword);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/profile")
+    public ResponseEntity<?> deleteProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        authService.deleteProfile(currentUsername);
+        return ResponseEntity.ok().build();
+    }
+}

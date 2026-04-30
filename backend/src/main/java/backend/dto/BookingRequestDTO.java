@@ -25,21 +25,51 @@ public class BookingRequestDTO {
 
     private Integer expectedAttendees;
 
-    public String getResourceId() { return resourceId; }
-    public void setResourceId(String resourceId) { this.resourceId = resourceId; }
+    public String getResourceId() {
+        return resourceId;
+    }
 
-    public LocalDate getDate() { return date; }
-    public void setDate(LocalDate date) { this.date = date; }
+    public void setResourceId(String resourceId) {
+        this.resourceId = resourceId;
+    }
 
-    public LocalTime getStartTime() { return startTime; }
-    public void setStartTime(LocalTime startTime) { this.startTime = startTime; }
+    public LocalDate getDate() {
+        return date;
+    }
 
-    public LocalTime getEndTime() { return endTime; }
-    public void setEndTime(LocalTime endTime) { this.endTime = endTime; }
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
 
-    public String getPurpose() { return purpose; }
-    public void setPurpose(String purpose) { this.purpose = purpose; }
+    public LocalTime getStartTime() {
+        return startTime;
+    }
 
-    public Integer getExpectedAttendees() { return expectedAttendees; }
-    public void setExpectedAttendees(Integer expectedAttendees) { this.expectedAttendees = expectedAttendees; }
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getPurpose() {
+        return purpose;
+    }
+
+    public void setPurpose(String purpose) {
+        this.purpose = purpose;
+    }
+
+    public Integer getExpectedAttendees() {
+        return expectedAttendees;
+    }
+
+    public void setExpectedAttendees(Integer expectedAttendees) {
+        this.expectedAttendees = expectedAttendees;
+    }
 }

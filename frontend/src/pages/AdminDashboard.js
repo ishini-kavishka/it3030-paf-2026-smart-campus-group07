@@ -2,12 +2,14 @@ import React, { useState, useEffect, useMemo } from 'react';
 import StatCards from '../components/StatCards';
 import ResourceCard from '../components/ResourceCard';
 import ResourceForm from '../components/ResourceForm';
+import AdminUserList from '../components/AdminUserList';
 import { resourceService } from '../services/api';
-import { Search, Plus, Filter, RefreshCw, Layers, ShieldCheck } from 'lucide-react';
+import { Search, Plus, Filter, RefreshCw, Layers, ShieldCheck, Users } from 'lucide-react';
 
 const RESOURCE_TYPES = ['CLASSROOM', 'LAB', 'AUDITORIUM', 'OFFICE', 'MEETING_ROOM'];
 
 const AdminDashboard = () => {
+  const [activeTab, setActiveTab] = useState('RESOURCES');
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -101,129 +103,154 @@ const AdminDashboard = () => {
             </span>
           </div>
           <h1 className="text-white font-bold" style={{ fontSize: '2.25rem', letterSpacing: '-0.02em' }}>
-            Resource Management
+            Admin Dashboard
           </h1>
-          <p className="text-muted">Create, update, and manage all campus facilities</p>
+          <p className="text-muted">Manage campus facilities and user accounts</p>
         </div>
 
-        <div className="flex gap-3">
-          <button onClick={fetchResources} className="btn btn-ghost" title="Reload Data">
-            <RefreshCw size={20} className={loading ? 'spin' : ''} />
+        <div className="flex gap-4">
+          <button
+            onClick={() => setActiveTab('RESOURCES')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all ${activeTab === 'RESOURCES' ? 'bg-[#6366f1] text-white shadow-lg' : 'bg-white/10 text-gray-300 hover:bg-white/20'
+              }`}
+          >
+            <ShieldCheck size={18} />
+            Resources
           </button>
           <button
-            onClick={() => { setSelected(null); setIsFormOpen(true); }}
-            className="btn btn-primary"
+            onClick={() => setActiveTab('USERS')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all ${activeTab === 'USERS' ? 'bg-[#6366f1] text-white shadow-lg' : 'bg-white/10 text-gray-300 hover:bg-white/20'
+              }`}
           >
-            <Plus size={20} />
-            Add Resource
+            <Users size={18} />
+            Users
           </button>
         </div>
       </header>
 
-      {/* ── Stat Cards ──────────────────────────────────────────── */}
-      <StatCards stats={stats} />
-
-      {/* ── Search / Filter Toolbar ──────────────────────────────── */}
-      <div className="toolbar glass-card" style={{ padding: '1rem', borderStyle: 'dashed' }}>
-        <div className="search-box">
-          <Search size={20} />
-          <input
-            type="text"
-            placeholder="Search by facility name or location…"
-            value={searchQuery}
-            onChange={e => setSearch(e.target.value)}
-          />
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Filter size={18} className="text-muted" />
-          <select
-            value={filterType}
-            onChange={e => setFilterType(e.target.value)}
-            className="filter-select"
-          >
-            <option value="ALL">All Types</option>
-            {RESOURCE_TYPES.map(t => (
-              <option key={t} value={t}>
-                {t.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div style={{ marginLeft: 'auto' }} className="flex items-center gap-2">
-          <Layers size={14} className="text-primary" />
-          <span className="text-xs font-bold uppercase tracking-widest text-muted">
-            {filteredResources.length} records
-          </span>
-        </div>
-      </div>
-
-      {/* ── Error Banner ─────────────────────────────────────────── */}
-      {error && (
-        <div
-          className="glass-card mb-8"
-          style={{ border: '1px solid rgba(244,63,94,0.2)', background: 'rgba(244,63,94,0.05)' }}
-        >
-          <div className="flex justify-between items-center">
-            <p className="text-xs font-bold uppercase" style={{ color: '#f43f5e' }}>{error}</p>
+      {activeTab === 'RESOURCES' ? (
+        <>
+          <div className="flex justify-end gap-3 mb-6">
+            <button onClick={fetchResources} className="btn btn-ghost" title="Reload Data">
+              <RefreshCw size={20} className={loading ? 'spin' : ''} />
+            </button>
             <button
-              onClick={fetchResources}
-              className="btn btn-ghost"
-              style={{ fontSize: '0.7rem', padding: '0.4rem 0.8rem' }}
+              onClick={() => { setSelected(null); setIsFormOpen(true); }}
+              className="btn btn-primary"
             >
-              Retry
+              <Plus size={20} />
+              Add Resource
             </button>
           </div>
-        </div>
-      )}
 
-      {/* ── Results Grid ─────────────────────────────────────────── */}
-      {loading && resources.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20">
-          <div
-            className="spin"
-            style={{
-              width: '40px', height: '40px',
-              border: '3px solid rgba(99,102,241,0.1)',
-              borderTopColor: '#6366f1',
-              borderRadius: '50%',
-            }}
+          {/* ── Stat Cards ──────────────────────────────────────────── */}
+          <StatCards stats={stats} />
+
+          {/* ── Search / Filter Toolbar ──────────────────────────────── */}
+          <div className="toolbar glass-card" style={{ padding: '1rem', borderStyle: 'dashed' }}>
+            <div className="search-box">
+              <Search size={20} />
+              <input
+                type="text"
+                placeholder="Search by facility name or location…"
+                value={searchQuery}
+                onChange={e => setSearch(e.target.value)}
+              />
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Filter size={18} className="text-muted" />
+              <select
+                value={filterType}
+                onChange={e => setFilterType(e.target.value)}
+                className="filter-select"
+              >
+                <option value="ALL">All Types</option>
+                {RESOURCE_TYPES.map(t => (
+                  <option key={t} value={t}>
+                    {t.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div style={{ marginLeft: 'auto' }} className="flex items-center gap-2">
+              <Layers size={14} className="text-primary" />
+              <span className="text-xs font-bold uppercase tracking-widest text-muted">
+                {filteredResources.length} records
+              </span>
+            </div>
+          </div>
+
+          {/* ── Error Banner ─────────────────────────────────────────── */}
+          {error && (
+            <div
+              className="glass-card mb-8"
+              style={{ border: '1px solid rgba(244,63,94,0.2)', background: 'rgba(244,63,94,0.05)' }}
+            >
+              <div className="flex justify-between items-center">
+                <p className="text-xs font-bold uppercase" style={{ color: '#f43f5e' }}>{error}</p>
+                <button
+                  onClick={fetchResources}
+                  className="btn btn-ghost"
+                  style={{ fontSize: '0.7rem', padding: '0.4rem 0.8rem' }}
+                >
+                  Retry
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ── Results Grid ─────────────────────────────────────────── */}
+          {loading && resources.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20">
+              <div
+                className="spin"
+                style={{
+                  width: '40px', height: '40px',
+                  border: '3px solid rgba(99,102,241,0.1)',
+                  borderTopColor: '#6366f1',
+                  borderRadius: '50%',
+                }}
+              />
+              <p className="text-muted text-sm mt-4">Connecting to core…</p>
+            </div>
+          ) : filteredResources.length > 0 ? (
+            <div className="resource-grid">
+              {filteredResources.map(resource => (
+                <ResourceCard
+                  key={resource.id}
+                  resource={resource}
+                  onEdit={r => { setSelected(r); setIsFormOpen(true); }}
+                  onDelete={handleDelete}
+                  onStatusToggle={handleStatusToggle}
+                />
+              ))}
+            </div>
+          ) : (
+            <div
+              className="glass-card flex flex-col items-center justify-center py-20"
+              style={{ borderStyle: 'dashed' }}
+            >
+              <Search size={48} className="text-dim mb-4" />
+              <h3 className="text-white font-bold">No facilities found</h3>
+              <p className="text-muted text-sm px-10 text-center">
+                Adjust your search or category filters, or add a new resource.
+              </p>
+            </div>
+          )}
+
+          {/* ── Create / Edit Modal ──────────────────────────────────── */}
+          <ResourceForm
+            isOpen={isFormOpen}
+            onClose={() => setIsFormOpen(false)}
+            resource={selectedResource}
+            onSubmit={handleCreateOrUpdate}
           />
-          <p className="text-muted text-sm mt-4">Connecting to core…</p>
-        </div>
-      ) : filteredResources.length > 0 ? (
-        <div className="resource-grid">
-          {filteredResources.map(resource => (
-            <ResourceCard
-              key={resource.id}
-              resource={resource}
-              onEdit={r => { setSelected(r); setIsFormOpen(true); }}
-              onDelete={handleDelete}
-              onStatusToggle={handleStatusToggle}
-            />
-          ))}
-        </div>
+        </>
       ) : (
-        <div
-          className="glass-card flex flex-col items-center justify-center py-20"
-          style={{ borderStyle: 'dashed' }}
-        >
-          <Search size={48} className="text-dim mb-4" />
-          <h3 className="text-white font-bold">No facilities found</h3>
-          <p className="text-muted text-sm px-10 text-center">
-            Adjust your search or category filters, or add a new resource.
-          </p>
-        </div>
+        <AdminUserList />
       )}
-
-      {/* ── Create / Edit Modal ──────────────────────────────────── */}
-      <ResourceForm
-        isOpen={isFormOpen}
-        onClose={() => setIsFormOpen(false)}
-        resource={selectedResource}
-        onSubmit={handleCreateOrUpdate}
-      />
     </>
   );
 };
