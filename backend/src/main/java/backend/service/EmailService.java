@@ -97,4 +97,27 @@ public class EmailService {
         
         emailSender.send(message);
     }
+
+    public void sendAdminAlert(User user, String alertMessage) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("weerasuriyaminidu@gmail.com");
+        message.setTo(user.getEmail());
+        message.setSubject("🔔 Smart Campus — Official Admin Alert");
+        message.setText(
+                "═══════════════════════════════════════\n" +
+                "   SMART CAMPUS — OFFICIAL ADMIN ALERT  \n" +
+                "═══════════════════════════════════════\n\n" +
+                "Dear " + user.getFirstName() + " " + user.getLastName() + ",\n\n" +
+                "You have received an official message from the Smart Campus Administration:\n\n" +
+                "──────────────────────────────────────\n" +
+                alertMessage + "\n" +
+                "──────────────────────────────────────\n\n" +
+                "This message has also been sent to your in-app notification center.\n\n" +
+                "Best regards,\n" +
+                "Smart Campus Administration\n" +
+                "═══════════════════════════════════════"
+        );
+        emailSender.send(message);
+    }
 }
+

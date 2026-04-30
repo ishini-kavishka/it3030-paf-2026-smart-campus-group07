@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { notificationService } from '../services/api';
-import { Bell, Trash2, ArrowLeft, Clock, ShieldAlert } from 'lucide-react';
+import { Bell, Trash2, ArrowLeft, Clock, ShieldAlert, Mail } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const NotificationsPage = () => {
@@ -77,7 +77,11 @@ const NotificationsPage = () => {
                         <div className="divide-y divide-gray-100">
                             {notifications.map(notification => {
                                 const isAdminAlert = notification.message.startsWith('ADMIN MESSAGE:');
-                                let displayMsg = isAdminAlert ? notification.message.replace('ADMIN MESSAGE:', '').trim() : notification.message;
+                                let displayMsg = isAdminAlert
+                                    ? notification.message.replace('[EMAIL DISPATCHED] ADMIN MESSAGE:', '').replace('ADMIN MESSAGE:', '').trim()
+                                    : notification.message;
+
+                                const isEmailDispatched = notification.message.includes('[EMAIL DISPATCHED]');
                                 
                                 const hasMyBookingsAction = displayMsg.includes('[ACTION:MY_BOOKINGS]');
                                 if (hasMyBookingsAction) {
@@ -98,12 +102,17 @@ const NotificationsPage = () => {
 
                                 return (
                                 <div key={notification.id} className={`p-6 transition-colors flex gap-4 animate-in slide-in-from-left-4 duration-300 ${
-                                    isAdminAlert ? 'bg-red-50/40 border-l-4 border-red-500 hover:bg-red-50/80 shadow-sm'
+                                    isEmailDispatched ? 'bg-amber-50/50 border-l-4 border-amber-500 hover:bg-amber-50/80 shadow-sm'
+                                    : isAdminAlert ? 'bg-red-50/40 border-l-4 border-red-500 hover:bg-red-50/80 shadow-sm'
                                     : hasCatalogueAction ? 'bg-emerald-50/60 border-l-4 border-emerald-500 hover:bg-emerald-50 shadow-sm'
                                     : 'hover:bg-gray-50'
                                 }`}>
                                     <div className="mt-1">
-                                        {isAdminAlert ? (
+                                        {isEmailDispatched ? (
+                                            <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 shadow-sm border border-amber-200 mt-1">
+                                                <Mail className="w-4 h-4" />
+                                            </div>
+                                        ) : isAdminAlert ? (
                                             <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 shadow-sm border border-red-200 mt-1">
                                                 <ShieldAlert className="w-4 h-4" />
                                             </div>
@@ -116,14 +125,20 @@ const NotificationsPage = () => {
                                         )}
                                     </div>
                                     <div className="flex-1">
-                                        {isAdminAlert && (
+                                        {isEmailDispatched && (
+                                            <div className="text-[0.65rem] font-bold text-amber-600 tracking-widest uppercase mb-1 flex items-center gap-1">
+                                                <Mail className="w-3 h-3" /> Official Admin Alert — Also Dispatched to Email
+                                            </div>
+                                        )}
+                                        {!isEmailDispatched && isAdminAlert && (
                                             <div className="text-[0.65rem] font-bold text-red-600 tracking-widest uppercase mb-1">Official System Alert</div>
                                         )}
                                         {hasCatalogueAction && (
                                             <div className="text-[0.65rem] font-bold text-emerald-600 tracking-widest uppercase mb-1">🏫 New Facility Announcement</div>
                                         )}
                                         <p className={`${
-                                            isAdminAlert ? 'text-red-900 font-bold'
+                                            isEmailDispatched ? 'text-amber-900 font-bold'
+                                            : isAdminAlert ? 'text-red-900 font-bold'
                                             : hasCatalogueAction ? 'text-emerald-900 font-semibold'
                                             : 'text-gray-900 font-semibold'
                                         } mb-1`}>
@@ -155,7 +170,8 @@ const NotificationsPage = () => {
                                             </button>
                                         )}
                                         <div className={`flex items-center text-sm ${
-                                            isAdminAlert ? 'text-red-500/80'
+                                            isEmailDispatched ? 'text-amber-500/80'
+                                            : isAdminAlert ? 'text-red-500/80'
                                             : hasCatalogueAction ? 'text-emerald-600/70'
                                             : 'text-gray-400'
                                         }`}>

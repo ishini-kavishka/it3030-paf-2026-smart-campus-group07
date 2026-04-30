@@ -23,8 +23,16 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        try {
+            return ResponseEntity.ok(authService.login(request));
+        } catch (Exception e) {
+            String msg = e.getMessage() != null ? e.getMessage() : "";
+            if ("ACCOUNT_SUSPENDED".equals(msg)) {
+                return ResponseEntity.status(403).body(Map.of("message", "Your account has been suspended. Please contact support."));
+            }
+            return ResponseEntity.status(401).body(Map.of("message", "Invalid username or password."));
+        }
     }
 
     @PostMapping("/google")
@@ -93,6 +101,21 @@ public class AuthController {
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> body) {
+        String email = body.get("email");
+        String newPassword = body.get("newPassword");
+        if (email == null || newPassword == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Email and new password are required."));
+        }
+        try {
+            AuthResponse response = authService.resetPassword(email.trim(), newPassword);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 

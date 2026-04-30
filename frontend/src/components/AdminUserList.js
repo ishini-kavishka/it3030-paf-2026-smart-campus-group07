@@ -14,6 +14,7 @@ const AdminUserList = () => {
     const [messagingUser, setMessagingUser] = useState(null);
     const [messageText, setMessageText] = useState('');
     const [sendingMsg, setSendingMsg] = useState(false);
+    const [dispatchEmail, setDispatchEmail] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [filterStatus, setFilterStatus] = useState('ALL');
 
@@ -71,10 +72,11 @@ const AdminUserList = () => {
         if (!messageText.trim()) return;
         setSendingMsg(true);
         try {
-            await adminApi.sendMessage(messagingUser.username, messageText, token);
+            await adminApi.sendMessage(messagingUser.username, messageText, token, dispatchEmail);
             setMessagingUser(null);
             setMessageText('');
-        } catch {
+            setDispatchEmail(false);
+        } catch (err) {
             alert('Failed to broadcast message to user.');
         } finally {
             setSendingMsg(false);
@@ -299,7 +301,7 @@ const AdminUserList = () => {
                             <h3 style={{ color: '#fff', fontWeight: 800, fontSize: '1rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                 <MessageSquare size={17} /> Custom Admin Alert
                             </h3>
-                            <button onClick={() => setMessagingUser(null)} style={{ background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', borderRadius: '8px', padding: '0.35rem', cursor: 'pointer', display: 'flex' }}>
+                            <button onClick={() => { setMessagingUser(null); setDispatchEmail(false); }} style={{ background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', borderRadius: '8px', padding: '0.35rem', cursor: 'pointer', display: 'flex' }}>
                                 <X size={16} />
                             </button>
                         </div>
@@ -319,8 +321,29 @@ const AdminUserList = () => {
                                 onFocus={e => e.target.style.borderColor = '#6366f1'}
                                 onBlur={e => e.target.style.borderColor = '#e2e8f0'}
                             />
+                            
+                            {/* Email dispatch checkbox */}
+                            <label
+                                style={{ display: 'flex', alignItems: 'flex-start', gap: '0.65rem', marginTop: '0.85rem', padding: '0.75rem 1rem', borderRadius: '10px', border: `1.5px solid ${dispatchEmail ? '#c7d2fe' : '#e2e8f0'}`, background: dispatchEmail ? '#eef2ff' : '#f8fafc', cursor: 'pointer', transition: 'all 0.2s' }}
+                            >
+                                <input
+                                    type="checkbox"
+                                    checked={dispatchEmail}
+                                    onChange={e => setDispatchEmail(e.target.checked)}
+                                    style={{ marginTop: '0.1rem', accentColor: '#6366f1', width: '16px', height: '16px', flexShrink: 0, cursor: 'pointer' }}
+                                />
+                                <div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: dispatchEmail ? '#4f46e5' : '#64748b', fontWeight: 700, fontSize: '0.82rem' }}>
+                                        <Send size={13} /> Dispatch to Email
+                                    </div>
+                                    <p style={{ fontSize: '0.72rem', color: dispatchEmail ? '#6366f1' : '#94a3b8', marginTop: '0.2rem', lineHeight: 1.4 }}>
+                                        Also sends this message to the user's registered email inbox with official formatting.
+                                    </p>
+                                </div>
+                            </label>
+
                             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.25rem' }}>
-                                <button onClick={() => setMessagingUser(null)} style={{ padding: '0.6rem 1.25rem', borderRadius: '10px', border: '1px solid #e2e8f0', background: '#fff', color: '#6b7280', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>
+                                <button onClick={() => { setMessagingUser(null); setDispatchEmail(false); }} style={{ padding: '0.6rem 1.25rem', borderRadius: '10px', border: '1px solid #e2e8f0', background: '#fff', color: '#6b7280', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>
                                     Cancel
                                 </button>
                                 <button

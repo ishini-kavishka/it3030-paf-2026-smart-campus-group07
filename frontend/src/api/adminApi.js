@@ -23,8 +23,8 @@ const activateUser = async (id, token) => {
     return response.data;
 };
 
-const sendMessage = async (username, message, token) => {
-    const response = await axios.post(`${API_URL}/users/${username}/message`, { message }, {
+const sendMessage = async (username, message, token, sendEmail = false) => {
+    const response = await axios.post(`${API_URL}/users/${username}/message`, { message, sendEmail }, {
         headers: { Authorization: `Bearer ${token}` }
     });
     return response.data;

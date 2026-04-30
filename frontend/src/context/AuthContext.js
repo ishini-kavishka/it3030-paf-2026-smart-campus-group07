@@ -60,6 +60,7 @@ export const AuthProvider = ({ children }) => {
             updateProfile,
             changePassword,
             deleteProfile,
+            setUser,
             loading
         }}>
             {!loading && children}

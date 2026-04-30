@@ -62,6 +62,14 @@ const deleteProfile = async (token) => {
     return response.data;
 };
 
+const resetPassword = async (email, newPassword) => {
+    const response = await axios.post(`${API_URL}/reset-password`, { email, newPassword });
+    if (response.data.token) {
+        localStorage.setItem('user', JSON.stringify(response.data));
+    }
+    return response.data;
+};
+
 const authApi = {
     login,
     googleLogin,
@@ -71,6 +79,7 @@ const authApi = {
     logout,
     updateProfile,
     changePassword,
+    resetPassword,
     deleteProfile
 };
 

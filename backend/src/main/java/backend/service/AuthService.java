@@ -21,8 +21,6 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 
-
-
 @Service
 public class AuthService {
 
@@ -55,8 +53,8 @@ public class AuthService {
         return userRepository.existsByUsername(username);
     }
 
+    // ── Signup ────────────────────────────────────────────────────────────────
     public void signup(SignupRequest request) {
-        // Validate required fields
         if (request.getFirstName() == null || request.getFirstName().trim().isEmpty()) {
             throw new RuntimeException("First name is required");
         }
@@ -66,7 +64,7 @@ public class AuthService {
         if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
             throw new RuntimeException("Email is required");
         }
-        
+
         User user = new User(
                 request.getUsername(),
                 passwordEncoder.encode(request.getPassword()),
@@ -87,17 +85,25 @@ public class AuthService {
         emailService.sendWelcomeEmail(user);
     }
 
+    // ── Login ─────────────────────────────────────────────────────────────────
     public AuthResponse login(LoginRequest request) {
+        // Check suspension FIRST — before Spring Security authentication
+        // so the exception is thrown from our code and caught by the controller
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if ("SUSPENDED".equalsIgnoreCase(user.getAccountStatus())) {
+            throw new RuntimeException("ACCOUNT_SUSPENDED");
+        }
+
+        // Now verify credentials
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
         final String jwt = jwtUtil.generateToken(userDetails);
-        
-        User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        
+
         notificationService.createNotification(user.getUsername(), "Welcome back, " + user.getFirstName() + "!");
 
         return new AuthResponse(
@@ -115,6 +121,7 @@ public class AuthService {
         );
     }
 
+    // ── Google Login ──────────────────────────────────────────────────────────
     public AuthResponse googleLogin(String tokenString) {
         try {
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
@@ -134,10 +141,8 @@ public class AuthService {
                 User user;
 
                 if (optionalUser.isEmpty()) {
-                    // Auto-provision user
                     user = new User();
-                    user.setUsername(email); 
-                    // Set an unusable encoded password since they login via Google
+                    user.setUsername(email);
                     user.setPassword(passwordEncoder.encode(java.util.UUID.randomUUID().toString()));
                     user.setFirstName(givenName != null && !givenName.trim().isEmpty() ? givenName : (name != null ? name : "User"));
                     user.setLastName(familyName != null && !familyName.trim().isEmpty() ? familyName : "");
@@ -146,7 +151,6 @@ public class AuthService {
                     user.setAccountStatus("ACTIVE");
                     user.setProfileImage(pictureUrl);
                     user.setCreatedAt(LocalDateTime.now());
-                    // Initialize other fields to prevent null issues
                     user.setPhoneNumber(null);
                     user.setAddress(null);
                     user.setDob(null);
@@ -157,10 +161,13 @@ public class AuthService {
                     emailService.sendWelcomeEmail(user);
                 } else {
                     user = optionalUser.get();
+                    // Block suspended Google users too
+                    if ("SUSPENDED".equalsIgnoreCase(user.getAccountStatus())) {
+                        throw new RuntimeException("ACCOUNT_SUSPENDED");
+                    }
                     notificationService.createNotification(user.getUsername(), "Welcome back, " + user.getFirstName() + "!");
                 }
 
-                // Generate JWT using UserDetails
                 UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
                 String jwt = jwtUtil.generateToken(userDetails);
 
@@ -185,11 +192,11 @@ public class AuthService {
         }
     }
 
+    // ── Update Profile ────────────────────────────────────────────────────────
     public AuthResponse updateProfile(String username, UpdateProfileRequest request) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        
-        // Validate required fields
+
         if (request.getFirstName() == null || request.getFirstName().trim().isEmpty()) {
             throw new RuntimeException("First name cannot be empty");
         }
@@ -199,12 +206,10 @@ public class AuthService {
         if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
             throw new RuntimeException("Email cannot be empty");
         }
-        
-        // Check if new email is already in use by another user
         if (!user.getEmail().equals(request.getEmail()) && userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email already in use");
         }
-                
+
         user.setFirstName(request.getFirstName().trim());
         user.setLastName(request.getLastName().trim());
         user.setEmail(request.getEmail().trim());
@@ -218,7 +223,7 @@ public class AuthService {
         if (request.getProfileImage() != null && !request.getProfileImage().trim().isEmpty()) {
             user.setProfileImage(request.getProfileImage().trim());
         }
-        
+
         userRepository.save(user);
 
         return new AuthResponse(
@@ -236,6 +241,7 @@ public class AuthService {
         );
     }
 
+    // ── Change Password ───────────────────────────────────────────────────────
     public void changePassword(String username, ChangePasswordRequest request) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -246,10 +252,40 @@ public class AuthService {
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
-        
+
         notificationService.createNotification(username, "Your password was recently modified.");
     }
 
+    // ── Reset Password (unauthenticated) ──────────────────────────────────────
+    public AuthResponse resetPassword(String email, String newPassword) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("No account found with that email address."));
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        notificationService.createNotification(user.getUsername(),
+                "🔐 Your password was successfully reset. If you did not make this change, please contact support immediately.");
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
+        String jwt = jwtUtil.generateToken(userDetails);
+
+        return new AuthResponse(
+                jwt,
+                user.getUsername(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getRole(),
+                user.getPhoneNumber(),
+                user.getAddress(),
+                user.getProfileImage(),
+                user.getDob(),
+                user.getCreatedAt()
+        );
+    }
+
+    // ── Delete Profile ────────────────────────────────────────────────────────
     public void deleteProfile(@NonNull String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));

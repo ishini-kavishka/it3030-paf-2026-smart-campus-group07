@@ -2,6 +2,7 @@ package backend.controller;
 
 import backend.model.User;
 import backend.repository.UserRepository;
+import backend.service.EmailService;
 import backend.service.NotificationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,10 +18,12 @@ public class AdminController {
 
     private final UserRepository userRepository;
     private final NotificationService notificationService;
+    private final EmailService emailService;
 
-    public AdminController(UserRepository userRepository, NotificationService notificationService) {
+    public AdminController(UserRepository userRepository, NotificationService notificationService, EmailService emailService) {
         this.userRepository = userRepository;
         this.notificationService = notificationService;
+        this.emailService = emailService;
     }
 
     @GetMapping("/users")
@@ -49,13 +52,34 @@ public class AdminController {
 
     @PostMapping("/users/{username}/message")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<?> sendMessage(@PathVariable String username, @RequestBody Map<String, String> payload) {
-        String msg = payload.get("message");
+    public ResponseEntity<?> sendMessage(@PathVariable String username, @RequestBody Map<String, Object> payload) {
+        String msg = (String) payload.get("message");
+        Boolean sendEmail = payload.get("sendEmail") instanceof Boolean ? (Boolean) payload.get("sendEmail") : false;
+
         if (msg == null || msg.trim().isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("message", "Message content is required."));
         }
-        notificationService.createNotification(username, "ADMIN MESSAGE: " + msg.trim());
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Build notification message — tag it if also emailed
+        String notificationMsg = sendEmail
+                ? "[EMAIL DISPATCHED] ADMIN MESSAGE: " + msg.trim()
+                : "ADMIN MESSAGE: " + msg.trim();
+
+        notificationService.createNotification(username, notificationMsg);
+
+        // Send email if requested
+        if (Boolean.TRUE.equals(sendEmail)) {
+            try {
+                emailService.sendAdminAlert(user, msg.trim());
+            } catch (Exception e) {
+                // Notification was already sent — log email failure but don't fail the request
+                System.err.println("Failed to send admin alert email: " + e.getMessage());
+            }
+        }
+
         return ResponseEntity.ok().build();
     }
 }
-
